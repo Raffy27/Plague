@@ -25,20 +25,24 @@ Begin
   Net:=TNet.Create(Nil);
   Repeat
     Net.GetCommands;
-    Writeln('Available commands: ',Net.CommandCount);
+    Log('Available commands: '+IntToStr(Net.CommandCount), White);
     For J:=1 to Net.CommandCount do Begin
       CmdID:=Net.GetCommandID(J);
       //Check if it is an Abort command
       if Net.Commands.ReadString(CmdID, 'Type', '')='Abort' then Begin
         ToAbort:=Net.Commands.ReadString(CmdID, 'CommandID', '');
         I:=ExecIndex(ToAbort);
-        Workers[I].Abort(CmdID);
+        if I>-1 then Begin
+          Log('ABORT: Thread #'+IntToStr(I), Magenta);
+          Workers[I].Abort(CmdID);
+        end else Log('ABORT - Thread not found!', Magenta);
       end else Begin
         //Check if commands are already under execution
         I:=ExecIndex(CmdID);
         if I=-1 then Begin
           I:=FindAPlace;
-          Writeln('Command ',CmdID,' will be assigned to Worker #',I,'.');
+          Log('Command ['+CmdID+'] of type '+Net.Commands.ReadString(CmdID, 'Type', '')+
+          ' --> Worker #'+IntToStr(I)+'.', Cyan);
           Workers[I]:=TCmdWorker.Create(CmdID, I);
         end;
       end;

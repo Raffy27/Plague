@@ -73,6 +73,7 @@ end;
 procedure TNet.DownloadFile(URL: String; var MS: TMemoryStream);
 Begin
   HTTPAgent.Get(URL, MS);
+  MS.Position:=0;
 end;
 
 procedure TNet.DataModuleCreate(Sender: TObject);

