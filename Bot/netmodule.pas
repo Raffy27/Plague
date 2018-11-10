@@ -23,7 +23,6 @@ type
 
     procedure GetCommands;
     function GetCommandID(Index: LongInt): String;
-    procedure DownloadFile(URL: String; var MS: TMemoryStream);
   end;
 
 const
@@ -68,12 +67,6 @@ Begin
     S.Free;
   end;
   CommandCount:=Commands.ReadInteger('General', 'CommandCount', 0);
-end;
-
-procedure TNet.DownloadFile(URL: String; var MS: TMemoryStream);
-Begin
-  HTTPAgent.Get(URL, MS);
-  MS.Position:=0;
 end;
 
 procedure TNet.DataModuleCreate(Sender: TObject);

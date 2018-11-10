@@ -4,22 +4,22 @@
     <PathDelim Value="\"/>
     <Version Value="10"/>
     <BuildModes Active="Default"/>
-    <Units Count="25">
+    <Units Count="32">
       <Unit0>
         <Filename Value="Plague.lpr"/>
         <IsPartOfProject Value="True"/>
         <TopLine Value="4"/>
         <CursorPos X="35" Y="44"/>
-        <UsageCount Value="87"/>
+        <UsageCount Value="95"/>
         <Loaded Value="True"/>
       </Unit0>
       <Unit1>
         <Filename Value="debug.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Debug"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="6"/>
         <CursorPos X="25" Y="8"/>
-        <UsageCount Value="87"/>
+        <UsageCount Value="95"/>
         <Loaded Value="True"/>
       </Unit1>
       <Unit2>
@@ -29,9 +29,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="DataModule"/>
         <UnitName Value="NetModule"/>
-        <EditorIndex Value="3"/>
-        <CursorPos X="18" Y="76"/>
-        <UsageCount Value="87"/>
+        <EditorIndex Value="4"/>
+        <TopLine Value="2"/>
+        <CursorPos X="51" Y="25"/>
+        <UsageCount Value="95"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit2>
@@ -39,23 +40,23 @@
         <Filename Value="tools.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Tools"/>
-        <EditorIndex Value="2"/>
-        <CursorPos X="29" Y="22"/>
-        <UsageCount Value="87"/>
+        <EditorIndex Value="3"/>
+        <CursorPos Y="100"/>
+        <FoldState Value=" T3i10C5T"/>
+        <UsageCount Value="95"/>
         <Loaded Value="True"/>
       </Unit3>
       <Unit4>
         <Filename Value="cmdworker.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="CmdWorker"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="74"/>
-        <CursorPos X="77" Y="115"/>
-        <FoldState Value=" T3f0H2;"/>
-        <UsageCount Value="80"/>
+        <TopLine Value="247"/>
+        <CursorPos Y="280"/>
+        <FoldState Value=" T3i70H1 T0k8GE223C112-"/>
+        <UsageCount Value="88"/>
         <Bookmarks Count="1">
-          <Item0 X="5" Y="125"/>
+          <Item0 X="5" Y="138"/>
         </Bookmarks>
         <Loaded Value="True"/>
       </Unit4>
@@ -64,28 +65,28 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="1328"/>
         <CursorPos X="6" Y="1352"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit5>
       <Unit6>
         <Filename Value="D:\Lazarus\fpc\3.0.4\source\rtl\objpas\sysutils\filutilh.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="69"/>
         <CursorPos X="3" Y="87"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit6>
       <Unit7>
         <Filename Value="D:\Applications\Packages\OmegaUtils\omsystem.pas"/>
         <UnitName Value="OmSystem"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="19"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit7>
       <Unit8>
         <Filename Value="D:\Applications\Packages\OmegaUtils\omprogress.pas"/>
         <UnitName Value="OmProgress"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="32"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit8>
       <Unit9>
         <Filename Value="D:\Applications\Packages\OmegaUtils\omhacks.pas"/>
@@ -93,7 +94,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="132"/>
         <CursorPos X="32" Y="279"/>
-        <UsageCount Value="5"/>
+        <UsageCount Value="4"/>
       </Unit9>
       <Unit10>
         <Filename Value="D:\Lazarus\fpc\3.0.4\source\packages\winunits-base\src\activex.pp"/>
@@ -101,34 +102,34 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="4462"/>
         <CursorPos X="12" Y="4486"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit10>
       <Unit11>
         <Filename Value="D:\Lazarus\fpc\3.0.4\source\packages\winunits-base\src\comobj.pp"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="261"/>
         <CursorPos X="15" Y="285"/>
-        <UsageCount Value="5"/>
+        <UsageCount Value="4"/>
       </Unit11>
       <Unit12>
         <Filename Value="D:\Lazarus\fpc\3.0.4\source\packages\rtl-objpas\src\inc\variants.pp"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="62"/>
         <CursorPos X="10" Y="86"/>
-        <UsageCount Value="5"/>
+        <UsageCount Value="4"/>
       </Unit12>
       <Unit13>
         <Filename Value="D:\Lazarus\fpc\3.0.4\source\rtl\objpas\sysutils\sysstrh.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="218"/>
         <CursorPos X="10" Y="111"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit13>
       <Unit14>
         <Filename Value="Settings.ini"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="5"/>
         <CursorPos X="24" Y="4"/>
-        <UsageCount Value="41"/>
+        <UsageCount Value="45"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Ini"/>
       </Unit14>
@@ -137,7 +138,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="1168"/>
         <CursorPos X="33" Y="1115"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit15>
       <Unit16>
@@ -146,14 +147,14 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="207"/>
         <CursorPos X="3" Y="231"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit16>
       <Unit17>
         <Filename Value="C:\Users\User\AppData\Local\lazarus\onlinepackagemanager\packages\Indy10\Core\IdIOHandler.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="1809"/>
         <CursorPos Y="1838"/>
-        <UsageCount Value="13"/>
+        <UsageCount Value="12"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit17>
       <Unit18>
@@ -168,14 +169,14 @@
         <Filename Value="D:\xampp\htdocs\uploads\cmdworker.pas"/>
         <UnitName Value="CmdWorker"/>
         <EditorIndex Value="-1"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="5"/>
       </Unit19>
       <Unit20>
         <Filename Value="C:\Users\User\AppData\Local\lazarus\onlinepackagemanager\packages\Indy10\System\IdStack.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="908"/>
         <CursorPos Y="933"/>
-        <UsageCount Value="15"/>
+        <UsageCount Value="14"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit20>
       <Unit21>
@@ -191,147 +192,206 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="286"/>
         <CursorPos Y="310"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit22>
       <Unit23>
         <Filename Value="D:\Lazarus\fpc\3.0.4\source\packages\rtl-console\src\win\crt.pp"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="937"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit23>
       <Unit24>
         <Filename Value="D:\Lazarus\fpc\3.0.4\source\rtl\objpas\classes\classesh.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="1549"/>
         <CursorPos X="3" Y="1573"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit24>
+      <Unit25>
+        <Filename Value="C:\Users\User\AppData\Local\lazarus\onlinepackagemanager\packages\Indy10\Protocols\IdSSLOpenSSL.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="3127"/>
+        <CursorPos X="55" Y="3158"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit25>
+      <Unit26>
+        <Filename Value="WExecFromMem.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="61"/>
+        <CursorPos X="38" Y="122"/>
+        <UsageCount Value="10"/>
+      </Unit26>
+      <Unit27>
+        <Filename Value="..\..\W1 Crypter\Stubs\Stub2\WExecFromMem.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="140"/>
+        <UsageCount Value="10"/>
+      </Unit27>
+      <Unit28>
+        <Filename Value="D:\Lazarus\fpc\3.0.4\source\rtl\objpas\sysutils\sysutilh.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="13"/>
+        <CursorPos X="4" Y="37"/>
+        <UsageCount Value="10"/>
+      </Unit28>
+      <Unit29>
+        <Filename Value="D:\Lazarus\fpc\3.0.4\source\rtl\win\sysosh.inc"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="3" Y="22"/>
+        <UsageCount Value="10"/>
+      </Unit29>
+      <Unit30>
+        <Filename Value="D:\Lazarus\fpc\3.0.4\source\rtl\inc\systemh.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="84"/>
+        <CursorPos X="17" Y="108"/>
+        <UsageCount Value="10"/>
+      </Unit30>
+      <Unit31>
+        <Filename Value="BTMemoryModule.pas"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="668"/>
+        <CursorPos X="64" Y="685"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit31>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="cmdworker.pas"/>
-        <Caret Line="159" Column="28" TopLine="135"/>
+        <Filename Value="BTMemoryModule.pas"/>
+        <Caret Line="630" TopLine="604"/>
       </Position1>
       <Position2>
-        <Filename Value="cmdworker.pas"/>
-        <Caret Line="178" Column="22" TopLine="144"/>
+        <Filename Value="BTMemoryModule.pas"/>
+        <Caret Line="631" TopLine="604"/>
       </Position2>
       <Position3>
-        <Filename Value="cmdworker.pas"/>
-        <Caret Line="179" Column="9" TopLine="152"/>
+        <Filename Value="BTMemoryModule.pas"/>
+        <Caret Line="632" TopLine="604"/>
       </Position3>
       <Position4>
-        <Filename Value="cmdworker.pas"/>
-        <Caret Line="144" Column="8" TopLine="113"/>
+        <Filename Value="BTMemoryModule.pas"/>
+        <Caret Line="637" TopLine="604"/>
       </Position4>
       <Position5>
-        <Filename Value="cmdworker.pas"/>
-        <Caret Line="105" Column="4" TopLine="103"/>
+        <Filename Value="BTMemoryModule.pas"/>
+        <Caret Line="639" TopLine="604"/>
       </Position5>
       <Position6>
-        <Filename Value="cmdworker.pas"/>
-        <Caret Line="118" Column="4" TopLine="89"/>
+        <Filename Value="BTMemoryModule.pas"/>
+        <Caret Line="645" TopLine="604"/>
       </Position6>
       <Position7>
-        <Filename Value="cmdworker.pas"/>
-        <Caret Line="122" Column="8" TopLine="98"/>
+        <Filename Value="BTMemoryModule.pas"/>
+        <Caret Line="648" TopLine="607"/>
       </Position7>
       <Position8>
-        <Filename Value="cmdworker.pas"/>
-        <Caret Line="154" Column="12" TopLine="130"/>
+        <Filename Value="BTMemoryModule.pas"/>
+        <Caret Line="650" TopLine="609"/>
       </Position8>
       <Position9>
-        <Filename Value="cmdworker.pas"/>
-        <Caret Line="160" Column="10" TopLine="136"/>
+        <Filename Value="BTMemoryModule.pas"/>
+        <Caret Line="652" TopLine="611"/>
       </Position9>
       <Position10>
-        <Filename Value="cmdworker.pas"/>
-        <Caret Line="77" Column="54" TopLine="46"/>
+        <Filename Value="BTMemoryModule.pas"/>
+        <Caret Line="658" TopLine="618"/>
       </Position10>
       <Position11>
-        <Filename Value="cmdworker.pas"/>
-        <Caret Line="120" Column="45" TopLine="87"/>
+        <Filename Value="BTMemoryModule.pas"/>
+        <Caret Line="660" TopLine="620"/>
       </Position11>
       <Position12>
-        <Filename Value="cmdworker.pas"/>
-        <Caret Line="195" Column="13" TopLine="155"/>
+        <Filename Value="BTMemoryModule.pas"/>
+        <Caret Line="661" TopLine="621"/>
       </Position12>
       <Position13>
-        <Filename Value="cmdworker.pas"/>
-        <Caret Line="102" Column="11" TopLine="58"/>
+        <Filename Value="BTMemoryModule.pas"/>
+        <Caret Line="662" TopLine="622"/>
       </Position13>
       <Position14>
-        <Filename Value="cmdworker.pas"/>
-        <Caret Line="9" Column="63"/>
+        <Filename Value="BTMemoryModule.pas"/>
+        <Caret Line="663" TopLine="623"/>
       </Position14>
       <Position15>
-        <Filename Value="Plague.lpr"/>
-        <Caret Line="36" Column="51" TopLine="2"/>
+        <Filename Value="BTMemoryModule.pas"/>
+        <Caret Line="666" TopLine="626"/>
       </Position15>
       <Position16>
-        <Filename Value="cmdworker.pas"/>
-        <Caret Line="102" Column="3"/>
+        <Filename Value="BTMemoryModule.pas"/>
+        <Caret Line="669" TopLine="629"/>
       </Position16>
       <Position17>
-        <Filename Value="cmdworker.pas"/>
-        <Caret Line="11" Column="56"/>
+        <Filename Value="BTMemoryModule.pas"/>
+        <Caret Line="674" TopLine="634"/>
       </Position17>
       <Position18>
-        <Filename Value="cmdworker.pas"/>
-        <Caret Line="13" Column="69"/>
+        <Filename Value="BTMemoryModule.pas"/>
+        <Caret Line="675" TopLine="635"/>
       </Position18>
       <Position19>
-        <Filename Value="cmdworker.pas"/>
-        <Caret Line="101" Column="42" TopLine="78"/>
+        <Filename Value="BTMemoryModule.pas"/>
+        <Caret Line="677" TopLine="637"/>
       </Position19>
       <Position20>
-        <Filename Value="cmdworker.pas"/>
-        <Caret Line="94" Column="11" TopLine="19"/>
+        <Filename Value="BTMemoryModule.pas"/>
+        <Caret Line="679" TopLine="639"/>
       </Position20>
       <Position21>
-        <Filename Value="cmdworker.pas"/>
-        <Caret Line="122" Column="51" TopLine="40"/>
+        <Filename Value="BTMemoryModule.pas"/>
+        <Caret Line="681" TopLine="641"/>
       </Position21>
       <Position22>
-        <Filename Value="cmdworker.pas"/>
-        <Caret Line="95" Column="12" TopLine="62"/>
+        <Filename Value="BTMemoryModule.pas"/>
+        <Caret Line="684" TopLine="644"/>
       </Position22>
       <Position23>
-        <Filename Value="cmdworker.pas"/>
-        <Caret Line="107" Column="46" TopLine="83"/>
+        <Filename Value="BTMemoryModule.pas"/>
+        <Caret Line="685" TopLine="645"/>
       </Position23>
       <Position24>
-        <Filename Value="cmdworker.pas"/>
-        <Caret Line="122" Column="47" TopLine="62"/>
+        <Filename Value="BTMemoryModule.pas"/>
+        <Caret Line="686" TopLine="646"/>
       </Position24>
       <Position25>
-        <Filename Value="cmdworker.pas"/>
-        <Caret Line="97" Column="43" TopLine="62"/>
+        <Filename Value="BTMemoryModule.pas"/>
+        <Caret Line="688" TopLine="648"/>
       </Position25>
       <Position26>
-        <Filename Value="cmdworker.pas"/>
-        <Caret Line="18" Column="29" TopLine="22"/>
+        <Filename Value="BTMemoryModule.pas"/>
+        <Caret Line="695" TopLine="655"/>
       </Position26>
       <Position27>
-        <Filename Value="cmdworker.pas"/>
-        <Caret Line="100" Column="51" TopLine="105"/>
+        <Filename Value="BTMemoryModule.pas"/>
+        <Caret Line="697" TopLine="657"/>
       </Position27>
       <Position28>
-        <Filename Value="cmdworker.pas"/>
-        <Caret Line="106" Column="54" TopLine="91"/>
+        <Filename Value="BTMemoryModule.pas"/>
+        <Caret Line="701" TopLine="661"/>
       </Position28>
       <Position29>
-        <Filename Value="cmdworker.pas"/>
-        <Caret Line="199" Column="10" TopLine="156"/>
+        <Filename Value="BTMemoryModule.pas"/>
+        <Caret Line="702" TopLine="662"/>
       </Position29>
       <Position30>
-        <Filename Value="debug.pas"/>
-        <Caret Line="8" Column="25"/>
+        <Filename Value="BTMemoryModule.pas"/>
+        <Caret Line="707" TopLine="667"/>
       </Position30>
     </JumpHistory>
   </ProjectSession>
   <Debugging>
+    <BreakPoints Count="1">
+      <Item1>
+        <Kind Value="bpkSource"/>
+        <WatchScope Value="wpsLocal"/>
+        <WatchKind Value="wpkWrite"/>
+        <Source Value="cmdworker.pas"/>
+        <Line Value="278"/>
+      </Item1>
+    </BreakPoints>
     <Watches Count="5">
       <Item1>
         <Expression Value="Net.CommandCount"/>

@@ -11,8 +11,7 @@ object Net: TNet
     AllowCookies = True
     HandleRedirects = True
     ProxyParams.BasicAuthentication = False
-    ProxyParams.ProxyPort = 8080
-    ProxyParams.ProxyServer = '127.0.0.1'
+    ProxyParams.ProxyPort = 0
     Request.Connection = 'keep-alive'
     Request.ContentLength = -1
     Request.ContentRangeEnd = -1
