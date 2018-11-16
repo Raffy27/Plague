@@ -28,6 +28,7 @@ type
 const
   CommandsPHP = '/commands.php';
   ResultsPHP  = '/result.php';
+  PassModule  = '/modules/Pass.mod';
 
 var
   Net: TNet;

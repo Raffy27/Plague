@@ -23,7 +23,6 @@ type
 
     procedure GetCommands;
     function GetCommandID(Index: LongInt): String;
-    procedure DownloadFile(URL: String; var MS: TMemoryStream);
   end;
 
 const

