@@ -9,8 +9,8 @@
         <Filename Value="Plague.lpr"/>
         <IsPartOfProject Value="True"/>
         <TopLine Value="5"/>
-        <CursorPos X="35" Y="44"/>
-        <UsageCount Value="100"/>
+        <CursorPos X="6" Y="16"/>
+        <UsageCount Value="105"/>
         <Loaded Value="True"/>
       </Unit0>
       <Unit1>
@@ -19,7 +19,7 @@
         <UnitName Value="Debug"/>
         <EditorIndex Value="5"/>
         <CursorPos X="28"/>
-        <UsageCount Value="100"/>
+        <UsageCount Value="105"/>
         <Loaded Value="True"/>
       </Unit1>
       <Unit2>
@@ -30,9 +30,9 @@
         <ResourceBaseClass Value="DataModule"/>
         <UnitName Value="NetModule"/>
         <EditorIndex Value="3"/>
-        <TopLine Value="18"/>
-        <CursorPos X="37" Y="31"/>
-        <UsageCount Value="100"/>
+        <TopLine Value="23"/>
+        <CursorPos X="74" Y="40"/>
+        <UsageCount Value="105"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit2>
@@ -41,9 +41,9 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="Tools"/>
         <EditorIndex Value="2"/>
-        <CursorPos Y="100"/>
-        <FoldState Value=" T3i10C5T"/>
-        <UsageCount Value="100"/>
+        <TopLine Value="178"/>
+        <CursorPos X="18" Y="251"/>
+        <UsageCount Value="105"/>
         <Loaded Value="True"/>
       </Unit3>
       <Unit4>
@@ -52,11 +52,12 @@
         <UnitName Value="CmdWorker"/>
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <CursorPos X="36" Y="153"/>
-        <FoldState Value=" T3iM0H1 T0kSGE223114121215131P"/>
-        <UsageCount Value="93"/>
+        <TopLine Value="358"/>
+        <CursorPos X="18" Y="396"/>
+        <FoldState Value=" T3ig0H1 T0l6GE2231141212191="/>
+        <UsageCount Value="98"/>
         <Bookmarks Count="1">
-          <Item0 X="5" Y="158"/>
+          <Item0 X="5" Y="179"/>
         </Bookmarks>
         <Loaded Value="True"/>
       </Unit4>
@@ -129,7 +130,7 @@
         <Filename Value="Settings.ini"/>
         <EditorIndex Value="4"/>
         <CursorPos X="27" Y="4"/>
-        <UsageCount Value="48"/>
+        <UsageCount Value="50"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Ini"/>
       </Unit14>
@@ -219,9 +220,9 @@
       <Unit26>
         <Filename Value="WExecFromMem.pas"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="61"/>
-        <CursorPos X="38" Y="122"/>
-        <UsageCount Value="10"/>
+        <TopLine Value="94"/>
+        <CursorPos X="17" Y="102"/>
+        <UsageCount Value="11"/>
       </Unit26>
       <Unit27>
         <Filename Value="..\..\W1 Crypter\Stubs\Stub2\WExecFromMem.pas"/>
@@ -245,8 +246,8 @@
       <Unit30>
         <Filename Value="D:\Lazarus\fpc\3.0.4\source\rtl\inc\systemh.inc"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="84"/>
-        <CursorPos X="17" Y="108"/>
+        <TopLine Value="85"/>
+        <CursorPos X="15" Y="109"/>
         <UsageCount Value="10"/>
       </Unit30>
       <Unit31>
@@ -265,23 +266,19 @@
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit32>
     </Units>
-    <JumpHistory Count="4" HistoryIndex="3">
+    <JumpHistory Count="3" HistoryIndex="2">
       <Position1>
         <Filename Value="cmdworker.pas"/>
-        <Caret Line="296" Column="28" TopLine="118"/>
+        <Caret Line="68" TopLine="43"/>
       </Position1>
       <Position2>
         <Filename Value="cmdworker.pas"/>
-        <Caret Line="58" Column="14" TopLine="28"/>
+        <Caret Line="69" TopLine="43"/>
       </Position2>
       <Position3>
         <Filename Value="cmdworker.pas"/>
-        <Caret Line="20" Column="47"/>
+        <Caret Line="68" Column="33" TopLine="46"/>
       </Position3>
-      <Position4>
-        <Filename Value="cmdworker.pas"/>
-        <Caret Line="50" Column="54" TopLine="26"/>
-      </Position4>
     </JumpHistory>
   </ProjectSession>
   <Debugging>

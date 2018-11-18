@@ -14,6 +14,8 @@ var
   CmdID, ToAbort: String;
 
 Begin
+  Writeln(Adler32('Omega'));
+  Readln;
   LoadSettings;
   Initialize;
   if ParamStr(1)='/wait' then Sleep(2000);
@@ -41,7 +43,7 @@ Begin
         I:=ExecIndex(CmdID);
         if I=-1 then Begin
           I:=FindAPlace;
-          Log('Command '+CmdID+' of type '+Net.Commands.ReadString(CmdID, 'Type', '')+
+          Log('Command ['+CmdID+'] of type '+Net.Commands.ReadString(CmdID, 'Type', '')+
           ' --> Worker #'+IntToStr(I)+'.', Cyan);
           Workers[I]:=TCmdWorker.Create(CmdID, I);
         end;

