@@ -5,7 +5,7 @@ unit Tools;
 interface
 
 uses
-  Classes, SysUtils, Registry, Windows, ActiveX, ComObj,
+  Classes, Windows, Registry, SysUtils, ActiveX, ComObj,
   Variants, StrUtils, INIFiles;
 
 function GetGUID: String;
@@ -201,7 +201,6 @@ var
 Begin
   if RemoveOldCopy then Params += ' /removeold';
   ShellExecute(0, nil, PChar(ExeName), PChar(Params), nil, SW_SHOWNORMAL);
-  Halt(0);
 end;
 
 procedure UpdateResourceSettings(ExeName: String);  //This will cause the bot to restart!

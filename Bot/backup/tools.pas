@@ -5,7 +5,7 @@ unit Tools;
 interface
 
 uses
-  Classes, SysUtils, Registry, Windows, ActiveX, ComObj,
+  Classes, Windows, Registry, SysUtils, ActiveX, ComObj,
   Variants, StrUtils, INIFiles;
 
 function GetGUID: String;
@@ -248,6 +248,7 @@ begin
   finally
     InMS.Free;
   end;
+  MS.Position:=0;
 end;
 
 end.

