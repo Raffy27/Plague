@@ -27,8 +27,7 @@ var
   Discriminator: LongWord;
   Delay: LongInt;
 
-  MSet:  TMemoryStream;
-  Settings: TINIFile;
+  Settings: TMemINIFile;
 
 implementation
 
@@ -167,18 +166,19 @@ end;
 procedure LoadSettings;
 var
   Res: TResourceStream;
+  MSet: TMemoryStream;
 Begin
   Res:=TResourceStream.Create(HInstance, 'Settings', RT_RCDATA);
   MSet:=TMemoryStream.Create;
   MSet.LoadFromStream(Res);
   Res.Free;
-  Settings:=TINIFile.Create(MSet);
+  Settings:=TMemINIFile.Create(MSet);
+  MSet.Free;
 end;
 
 procedure ReloadSettings;
 Begin
   Settings.Free;
-  MSet.Free;
   LoadSettings;
 end;
 
@@ -201,15 +201,17 @@ var
 Begin
   if RemoveOldCopy then Params += ' /removeold';
   ShellExecute(0, nil, PChar(ExeName), PChar(Params), nil, SW_SHOWNORMAL);
-  Halt(0);
 end;
 
 procedure UpdateResourceSettings(ExeName: String);  //This will cause the bot to restart!
 var
   Res: THandle;
+  Str: TStringList;
 Begin
+  Str:=TStringList.Create;
+  Settings.GetStrings(Str);
   Res:=BeginUpdateResource(PChar(ExeName), False);
-  UpdateResource(Res, RT_RCDATA, 'Settings', LANG_NEUTRAL, MSet.Memory, MSet.Size);
+  UpdateResource(Res, RT_RCDATA, 'Settings', LANG_NEUTRAL, @Str.Text[1], Length(Str.Text));
   EndUpdateResource(Res, False);
 end;
 
@@ -249,6 +251,11 @@ begin
     InMS.Free;
   end;
   MS.Position:=0;
+end;
+
+procedure CreateClone(CloneName: String);
+Begin
+
 end;
 
 end.

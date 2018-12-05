@@ -8,10 +8,9 @@
       <Unit0>
         <Filename Value="Plague.lpr"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
-        <TopLine Value="28"/>
-        <CursorPos X="29" Y="23"/>
-        <UsageCount Value="118"/>
+        <TopLine Value="17"/>
+        <CursorPos X="55" Y="39"/>
+        <UsageCount Value="120"/>
         <Loaded Value="True"/>
       </Unit0>
       <Unit1>
@@ -20,7 +19,7 @@
         <UnitName Value="Debug"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="28"/>
-        <UsageCount Value="118"/>
+        <UsageCount Value="120"/>
       </Unit1>
       <Unit2>
         <Filename Value="netmodule.pas"/>
@@ -30,20 +29,20 @@
         <ResourceBaseClass Value="DataModule"/>
         <UnitName Value="NetModule"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="37"/>
         <CursorPos X="28" Y="59"/>
-        <UsageCount Value="118"/>
+        <UsageCount Value="120"/>
         <Loaded Value="True"/>
       </Unit2>
       <Unit3>
         <Filename Value="tools.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Tools"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
-        <TopLine Value="34"/>
-        <CursorPos X="11" Y="13"/>
-        <FoldState Value=" T3e0B6 pjFje09312p"/>
-        <UsageCount Value="118"/>
+        <TopLine Value="175"/>
+        <CursorPos X="2" Y="255"/>
+        <FoldState Value=" T3d0B62312I"/>
+        <UsageCount Value="120"/>
         <Loaded Value="True"/>
       </Unit3>
       <Unit4>
@@ -51,9 +50,9 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="CmdWorker"/>
         <EditorIndex Value="2"/>
-        <TopLine Value="71"/>
-        <CursorPos X="59" Y="134"/>
-        <UsageCount Value="111"/>
+        <TopLine Value="390"/>
+        <CursorPos X="19" Y="393"/>
+        <UsageCount Value="113"/>
         <Bookmarks Count="1">
           <Item0 X="5" Y="180"/>
         </Bookmarks>
@@ -64,9 +63,9 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="Spread"/>
         <EditorIndex Value="4"/>
-        <TopLine Value="75"/>
-        <CursorPos X="18" Y="36"/>
-        <UsageCount Value="27"/>
+        <TopLine Value="142"/>
+        <CursorPos X="51" Y="135"/>
+        <UsageCount Value="29"/>
         <Loaded Value="True"/>
       </Unit5>
       <Unit6>
@@ -309,15 +308,14 @@
       </Unit39>
       <Unit40>
         <Filename Value="C:\Users\Win10\AppData\Local\lazarus\onlinepackagemanager\packages\Indy10\Protocols\IdHTTP.pas"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="760"/>
         <CursorPos X="47" Y="764"/>
-        <UsageCount Value="10"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="11"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit40>
     </Units>
-    <JumpHistory Count="11" HistoryIndex="10">
+    <JumpHistory Count="22" HistoryIndex="21">
       <Position1>
         <Filename Value="spread.pas"/>
         <Caret Line="30" Column="5" TopLine="4"/>
@@ -355,12 +353,57 @@
         <Caret Line="17" Column="31"/>
       </Position9>
       <Position10>
-        <Filename Value="C:\Users\Win10\AppData\Local\lazarus\onlinepackagemanager\packages\Indy10\Protocols\IdHTTP.pas"/>
-      </Position10>
-      <Position11>
         <Filename Value="Plague.lpr"/>
         <Caret Line="21" Column="33" TopLine="7"/>
+      </Position10>
+      <Position11>
+        <Filename Value="spread.pas"/>
+        <Caret Line="109" Column="49" TopLine="92"/>
       </Position11>
+      <Position12>
+        <Filename Value="spread.pas"/>
+        <Caret Line="100" Column="66" TopLine="73"/>
+      </Position12>
+      <Position13>
+        <Filename Value="spread.pas"/>
+        <Caret Line="103" Column="63" TopLine="83"/>
+      </Position13>
+      <Position14>
+        <Filename Value="spread.pas"/>
+        <Caret Line="100" Column="65" TopLine="68"/>
+      </Position14>
+      <Position15>
+        <Filename Value="spread.pas"/>
+        <Caret Line="15" Column="10" TopLine="9"/>
+      </Position15>
+      <Position16>
+        <Filename Value="spread.pas"/>
+        <Caret Line="148" Column="60" TopLine="122"/>
+      </Position16>
+      <Position17>
+        <Filename Value="spread.pas"/>
+        <Caret Line="150" Column="25" TopLine="122"/>
+      </Position17>
+      <Position18>
+        <Filename Value="spread.pas"/>
+        <Caret Line="145" Column="33" TopLine="129"/>
+      </Position18>
+      <Position19>
+        <Filename Value="tools.pas"/>
+        <Caret Line="29" TopLine="52"/>
+      </Position19>
+      <Position20>
+        <Filename Value="tools.pas"/>
+        <Caret Line="176" Column="13" TopLine="119"/>
+      </Position20>
+      <Position21>
+        <Filename Value="tools.pas"/>
+        <Caret Line="175" Column="17" TopLine="125"/>
+      </Position21>
+      <Position22>
+        <Filename Value="tools.pas"/>
+        <Caret Line="181" Column="17" TopLine="125"/>
+      </Position22>
     </JumpHistory>
   </ProjectSession>
   <Debugging>
