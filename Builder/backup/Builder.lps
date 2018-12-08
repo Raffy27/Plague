@@ -4,15 +4,14 @@
     <PathDelim Value="\"/>
     <Version Value="10"/>
     <BuildModes Active="Default"/>
-    <Units Count="5">
+    <Units Count="9">
       <Unit0>
         <Filename Value="Builder.lpr"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <WindowIndex Value="-1"/>
-        <TopLine Value="-1"/>
-        <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="35"/>
+        <EditorIndex Value="2"/>
+        <CursorPos X="59" Y="6"/>
+        <UsageCount Value="44"/>
+        <Loaded Value="True"/>
       </Unit0>
       <Unit1>
         <Filename Value="mainunit.pas"/>
@@ -22,161 +21,201 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="MainUnit"/>
         <IsVisibleTab Value="True"/>
-        <TopLine Value="199"/>
-        <CursorPos X="28" Y="242"/>
-        <FoldState Value=" T3kH03064^"/>
-        <UsageCount Value="35"/>
+        <TopLine Value="203"/>
+        <CursorPos X="34" Y="233"/>
+        <FoldState Value=" T3mg0O3 piZjO0302173P"/>
+        <UsageCount Value="44"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit1>
       <Unit2>
-        <Filename Value="C:\Users\Win10\AppData\Local\lazarus\onlinepackagemanager\packages\bgracontrols-master\bctypes.pas"/>
-        <UnitName Value="BCTypes"/>
+        <Filename Value="logic.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Logic"/>
         <EditorIndex Value="3"/>
-        <TopLine Value="26"/>
-        <CursorPos X="3" Y="44"/>
-        <UsageCount Value="17"/>
+        <CursorPos X="35" Y="19"/>
+        <UsageCount Value="28"/>
         <Loaded Value="True"/>
       </Unit2>
       <Unit3>
-        <Filename Value="D:\lazarus\fpc\3.0.4\source\rtl\win\wininc\struct.inc"/>
-        <EditorIndex Value="2"/>
-        <TopLine Value="4707"/>
-        <CursorPos X="6" Y="4725"/>
-        <UsageCount Value="13"/>
-        <Loaded Value="True"/>
+        <Filename Value="C:\Users\Win10\AppData\Local\lazarus\onlinepackagemanager\packages\bgracontrols-master\bctypes.pas"/>
+        <UnitName Value="BCTypes"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="26"/>
+        <CursorPos X="3" Y="44"/>
+        <UsageCount Value="16"/>
       </Unit3>
       <Unit4>
-        <Filename Value="D:\lazarus\lcl\lcltype.pp"/>
+        <Filename Value="D:\Lazarus\fpc\3.0.4\source\rtl\win\wininc\struct.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="4707"/>
+        <CursorPos X="6" Y="4725"/>
+        <UsageCount Value="12"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="D:\Lazarus\lcl\lcltype.pp"/>
         <UnitName Value="LCLType"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="1130"/>
-        <CursorPos X="14" Y="1144"/>
-        <UsageCount Value="12"/>
+        <TopLine Value="2175"/>
+        <CursorPos X="3" Y="2195"/>
+        <UsageCount Value="13"/>
         <Loaded Value="True"/>
-      </Unit4>
+      </Unit5>
+      <Unit6>
+        <Filename Value="D:\Lazarus\lcl\include\control.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="3478"/>
+        <CursorPos Y="3519"/>
+        <UsageCount Value="12"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="D:\Lazarus\fpc\3.0.4\source\rtl\win\wininc\defines.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="4045"/>
+        <CursorPos X="29" Y="4184"/>
+        <UsageCount Value="11"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="D:\Lazarus\fpc\3.0.4\source\packages\fcl-process\src\process.pp"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="3" Y="24"/>
+        <UsageCount Value="10"/>
+      </Unit8>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="mainunit.pas"/>
-        <Caret Line="63" Column="42" TopLine="49"/>
+        <Filename Value="logic.pas"/>
+        <Caret Line="152" TopLine="113"/>
       </Position1>
       <Position2>
-        <Filename Value="mainunit.pas"/>
-        <Caret Line="64" Column="42" TopLine="50"/>
+        <Filename Value="logic.pas"/>
+        <Caret Line="154" TopLine="113"/>
       </Position2>
       <Position3>
-        <Filename Value="mainunit.pas"/>
-        <Caret Line="65" Column="42" TopLine="51"/>
+        <Filename Value="logic.pas"/>
+        <Caret Line="155" TopLine="114"/>
       </Position3>
       <Position4>
-        <Filename Value="mainunit.pas"/>
-        <Caret Line="69" Column="69" TopLine="69"/>
+        <Filename Value="logic.pas"/>
+        <Caret Line="156" TopLine="115"/>
       </Position4>
       <Position5>
-        <Filename Value="mainunit.pas"/>
-        <Caret Line="125" Column="3" TopLine="123"/>
+        <Filename Value="logic.pas"/>
+        <Caret Line="157" TopLine="116"/>
       </Position5>
       <Position6>
-        <Filename Value="mainunit.pas"/>
-        <Caret Line="226" Column="18" TopLine="170"/>
+        <Filename Value="logic.pas"/>
+        <Caret Line="159" TopLine="118"/>
       </Position6>
       <Position7>
-        <Filename Value="mainunit.pas"/>
-        <Caret Line="155" Column="37" TopLine="73"/>
+        <Filename Value="logic.pas"/>
+        <Caret Line="160" TopLine="119"/>
       </Position7>
       <Position8>
-        <Filename Value="mainunit.pas"/>
-        <Caret Line="156" Column="37" TopLine="118"/>
+        <Filename Value="logic.pas"/>
+        <Caret Line="162" TopLine="121"/>
       </Position8>
       <Position9>
-        <Filename Value="mainunit.pas"/>
-        <Caret Line="130" Column="29" TopLine="119"/>
+        <Filename Value="logic.pas"/>
+        <Caret Line="163" TopLine="122"/>
       </Position9>
       <Position10>
-        <Filename Value="mainunit.pas"/>
-        <Caret Line="131" Column="29" TopLine="120"/>
+        <Filename Value="logic.pas"/>
+        <Caret Line="164" TopLine="123"/>
       </Position10>
       <Position11>
-        <Filename Value="mainunit.pas"/>
-        <Caret Line="132" Column="29" TopLine="121"/>
+        <Filename Value="logic.pas"/>
+        <Caret Line="167" TopLine="126"/>
       </Position11>
       <Position12>
-        <Filename Value="mainunit.pas"/>
-        <Caret Line="133" Column="29" TopLine="122"/>
+        <Filename Value="logic.pas"/>
+        <Caret Line="168" TopLine="126"/>
       </Position12>
       <Position13>
-        <Filename Value="mainunit.pas"/>
-        <Caret Line="134" Column="29" TopLine="123"/>
+        <Filename Value="logic.pas"/>
+        <Caret Line="169" TopLine="126"/>
       </Position13>
       <Position14>
-        <Filename Value="mainunit.pas"/>
-        <Caret Line="135" Column="29" TopLine="124"/>
+        <Filename Value="logic.pas"/>
+        <Caret Line="171" TopLine="126"/>
       </Position14>
       <Position15>
         <Filename Value="mainunit.pas"/>
-        <Caret Line="136" Column="29" TopLine="125"/>
+        <Caret Line="227" Column="9" TopLine="203"/>
       </Position15>
       <Position16>
         <Filename Value="mainunit.pas"/>
-        <Caret Line="137" Column="29" TopLine="126"/>
+        <Caret Line="224" Column="37" TopLine="203"/>
       </Position16>
       <Position17>
-        <Filename Value="mainunit.pas"/>
-        <Caret Line="139" Column="29" TopLine="128"/>
+        <Filename Value="logic.pas"/>
+        <Caret Line="162" Column="31" TopLine="126"/>
       </Position17>
       <Position18>
         <Filename Value="mainunit.pas"/>
-        <Caret Line="247" Column="23" TopLine="191"/>
+        <Caret Line="227" Column="48" TopLine="203"/>
       </Position18>
       <Position19>
-        <Filename Value="mainunit.pas"/>
-        <Caret Line="248" Column="23" TopLine="192"/>
+        <Filename Value="logic.pas"/>
+        <Caret Line="124" Column="29" TopLine="76"/>
       </Position19>
       <Position20>
-        <Filename Value="mainunit.pas"/>
-        <Caret Line="249" Column="23" TopLine="193"/>
+        <Filename Value="logic.pas"/>
+        <Caret Line="119" Column="25" TopLine="82"/>
       </Position20>
       <Position21>
-        <Filename Value="mainunit.pas"/>
-        <Caret Line="248" Column="23" TopLine="192"/>
+        <Filename Value="logic.pas"/>
+        <Caret Line="137" Column="7" TopLine="91"/>
       </Position21>
       <Position22>
-        <Filename Value="mainunit.pas"/>
-        <Caret Line="249" Column="23" TopLine="193"/>
+        <Filename Value="logic.pas"/>
+        <Caret Line="8" Column="29"/>
       </Position22>
       <Position23>
         <Filename Value="mainunit.pas"/>
-        <Caret Line="250" Column="23" TopLine="194"/>
+        <Caret Line="224" Column="37" TopLine="203"/>
       </Position23>
       <Position24>
-        <Filename Value="mainunit.pas"/>
-        <Caret Line="252" Column="23" TopLine="196"/>
+        <Filename Value="logic.pas"/>
+        <Caret Line="94" Column="21" TopLine="54"/>
       </Position24>
       <Position25>
         <Filename Value="mainunit.pas"/>
-        <Caret Line="254" Column="23" TopLine="198"/>
+        <Caret Line="439" Column="55" TopLine="436"/>
       </Position25>
       <Position26>
         <Filename Value="mainunit.pas"/>
-        <Caret Line="253" Column="23" TopLine="197"/>
+        <Caret Line="440" Column="55" TopLine="437"/>
       </Position26>
       <Position27>
         <Filename Value="mainunit.pas"/>
-        <Caret Line="255" Column="23" TopLine="199"/>
+        <Caret Line="445" Column="9" TopLine="437"/>
       </Position27>
       <Position28>
         <Filename Value="mainunit.pas"/>
-        <Caret Line="254" Column="23" TopLine="198"/>
+        <Caret Line="442" Column="31" TopLine="418"/>
       </Position28>
       <Position29>
         <Filename Value="mainunit.pas"/>
-        <Caret Line="255" Column="23" TopLine="199"/>
+        <Caret Line="229" Column="48" TopLine="212"/>
       </Position29>
       <Position30>
         <Filename Value="mainunit.pas"/>
-        <Caret Line="254" Column="23" TopLine="198"/>
+        <Caret Line="230" Column="47" TopLine="203"/>
       </Position30>
     </JumpHistory>
   </ProjectSession>
+  <Debugging>
+    <Watches Count="3">
+      <Item1>
+        <Expression Value="Empty"/>
+      </Item1>
+      <Item2>
+        <Expression Value="Result"/>
+      </Item2>
+      <Item3>
+        <Expression Value="_E"/>
+      </Item3>
+    </Watches>
+  </Debugging>
 </CONFIG>

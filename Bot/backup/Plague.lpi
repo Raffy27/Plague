@@ -87,6 +87,10 @@
       <TargetOS Value="win32"/>
     </CodeGeneration>
     <Linking>
+      <Debugging>
+        <GenerateDebugInfo Value="False"/>
+        <UseExternalDbgSyms Value="True"/>
+      </Debugging>
       <LinkSmart Value="True"/>
     </Linking>
   </CompilerOptions>

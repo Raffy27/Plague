@@ -73,6 +73,13 @@ function RegisterClient($_GUID){
 	return ($Conn->query($Sql));
 }
 
+function RemoveClient($_GUID){
+	LogStr("Uninstalling: $_GUID");
+	global $Conn;
+	$Sql = "DELETE FROM clients WHERE GUID = '$_GUID';";
+	return ($Conn->query($Sql));
+}
+
 function CompleteRegister($_GUID, $Values){
 	UpdateLastSeen($_GUID);
 	global $Conn;

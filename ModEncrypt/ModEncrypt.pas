@@ -33,22 +33,28 @@ begin
 end;
 
 begin
-  I:='';
-  Repeat;
+  I:=ParamStr(1);
+  While Not(FileExists(I)) do Begin
     Writeln('File to encrypt = ');
     Readln(I);
-  until FileExists(I);
+  end;
   Writeln('Encrypting...');
   MS:=TMemoryStream.Create;
   MS.LoadFromFile(I);
   MS.Position:=0;
   ToggleCrypt(MS, 7019);
   Writeln('Done.');
-  Writeln('Output file = ');
-  Readln(O);
+  O:=ParamStr(2);
+  if Length(O)=0 then Begin
+    Writeln('Output file = ');
+    Readln(O);
+  end;
   MS.SaveToFile(O);
   MS.Free;
-  Writeln('Saved. Press ENTER to Exit');
-  Readln;
+  Write('Saved. ');
+  if Length(ParamStr(3))=0 then Begin
+    Writeln('Press ENTER to Exit.');
+    Readln;
+  end;
 end.
 

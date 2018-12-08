@@ -5,7 +5,7 @@ unit NetModule;
 interface
 
 uses
-  Classes, SysUtils, Interfaces, IdHTTP, INIFiles, Tools, Debug;
+  Classes, SysUtils, Interfaces, IdHTTP, INIFiles, Tools;
 
 type
 

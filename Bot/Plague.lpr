@@ -7,13 +7,14 @@ uses
   NetModule, Tools,
   Classes, Windows, SysUtils, CmdWorker, Spread;
 
-{$R *.res}
-
 var
   J, I: LongInt;
   CmdID, ToAbort: String;
 
+{$R *.res}
+
 Begin
+  SetLastError(0);
   if ParamStr(1)='/open' then ShellExecute(0, 'open', 'explorer.exe',
     PChar(ParamStr(2)), nil, SW_NORMAL);
   LoadSettings;
@@ -21,8 +22,9 @@ Begin
   if ParamStr(1)='/wait' then Sleep(Delay+200);
   if ParamStr(2)='/removeold' then
     if FileExists(ParamStr(0)+'.old') then DeleteFile(ParamStr(0)+'.old');
-  ChDir(ExtractFileDir(ParamStr(0)));
-  //if Settings.ReadInteger('General', 'FirstRun', 1) = 1 then DoFirstRun;
+  if Settings.ReadInteger('General', 'FirstRun', 1) = 1 then DoFirstRun;
+  MutexMagic;
+  ChDir(Base);
 
   Net:=TNet.Create(Nil);
   Repeat
@@ -61,4 +63,5 @@ Begin
   end;
   SetLength(Workers, 0);
   Net.Free;
+  CloseHandle(Mutex);
 end.

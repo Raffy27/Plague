@@ -31,6 +31,9 @@ switch($RT){
 			die('Result not set.');
 	    } else $R = $_POST['Result'];
 		SetResult($GUID, $R);
+		if($R=='Uninstalling...'){
+			RemoveClient($GUID);
+		}
 	} break;
 	case RT_FILE:{
 		if(!isset($_FILES['File'])){
