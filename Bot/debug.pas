@@ -5,7 +5,7 @@ unit Debug;
 interface
 
 uses
-  Classes, SysUtils, Crt;
+  Classes, SysUtils;
 
 procedure Dump(Str, F: String);
 function MSToString(M: TMemoryStream): AnsiString;
@@ -52,9 +52,9 @@ end;
 
 procedure Log(Str: String; Color: Byte);
 Begin
-  TextColor(Color);
+  //TextColor(Color);
   Writeln(Str);
-  TextColor(LightGray);
+  //TextColor(LightGray);
 end;
 
 end.

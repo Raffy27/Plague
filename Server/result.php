@@ -51,7 +51,7 @@ switch($RT){
 	} break;
 }
 
-RemoveCommand($GUID, $ID);
+if(!isset($_POST['Continue'])) RemoveCommand($GUID, $ID);
 
 echo("Result accepted. ^_^");
 

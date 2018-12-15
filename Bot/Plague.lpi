@@ -15,8 +15,9 @@
       <Scaled Value="True"/>
       <UseAppBundle Value="False"/>
       <ResourceType Value="res"/>
-      <Resources Count="1">
+      <Resources Count="2">
         <Resource_0 FileName="Settings.ini" Type="RCDATA" ResourceName="SETTINGS"/>
+        <Resource_1 FileName="NewTask.xml" Type="RCDATA" ResourceName="NEWTASK"/>
       </Resources>
     </General>
     <BuildModes Count="1">
@@ -94,7 +95,7 @@
     </Linking>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="4">
+    <Exceptions Count="6">
       <Item1>
         <Name Value="EAbort"/>
       </Item1>
@@ -107,6 +108,12 @@
       <Item4>
         <Name Value="EIdWinsockStubError"/>
       </Item4>
+      <Item5>
+        <Name Value="RunError(5)"/>
+      </Item5>
+      <Item6>
+        <Name Value="EInOutError"/>
+      </Item6>
     </Exceptions>
   </Debugging>
 </CONFIG>

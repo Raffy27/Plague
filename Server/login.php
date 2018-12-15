@@ -26,9 +26,13 @@ if(!ConnectDB('plague')){
 
 if(UserValid($_User, $_Pass)){
 	$_SESSION['user'] = $_User;
-	header('Location: dashboard.php');
+	if(!isset($_POST['builder']))
+	  header('Location: dashboard.php');
+    else echo('Success');
 } else {
-	header('Location: index.php');
+	if(!isset($_POST['builder']))
+	  header('Location: index.php');
+    else echo('Failed');
 }
 
 ?>
