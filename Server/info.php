@@ -9,7 +9,7 @@ if(!ConnectDB('plague')){
 	die('Failed to connect to the database.');
 } else { ?>
 
-<table id="table">
+<table id="table" style="width: 100%;">
 	<tr>
 		<th style="width: 56px;">Status</th>
 		<th style="width: 46px;">GUID</th>

@@ -51,6 +51,10 @@ if(!isset($_GET['tab'])){
 				<img src="img/worldwide.png">
 				Map
 			</a></li>
+			<li><a href="?tab=Statistics">
+				<img src="img/bar-chart.png">
+				Statistics
+			</a></li>
 			<li><a href="?tab=Detections">
 				<img src="img/insect.png">
 				Detections
@@ -80,7 +84,7 @@ if(!isset($_GET['tab'])){
 						include('commands.php');
 						$R = ob_get_clean();
 						if(strlen($R)==0) $R = 'The specified GUID is invalid.';
-						echo('<p>Commands of ' . $_GET['GUID'] . ':</p><pre>' . $R . '</pre>');
+						echo('<p>Commands of ' . $_GET['GUID'] . ':</p><pre style="width: 100%;">' . $R . '</pre>');
 					}
 				} break;
 				case 'Map':{
@@ -88,11 +92,19 @@ if(!isset($_GET['tab'])){
 					include('tabs/map.php');
 					echo(ob_get_clean());
 				} break;
+				case 'Statistics': {
+					ob_start();
+					include('tabs/statistics.php');
+					echo(ob_get_clean());
+				} break;
+				case 'Detections': {
+					echo(file_get_contents('tabs/detections.html'));
+				} break;
 				case 'Logs':{
 					$FileName = "logs/Log_" . date("Y-m-d") . ".txt";
 					if(file_exists($FileName)){
 						$FC = file_get_contents($FileName);
-						echo('<pre>' . $FC . '</pre>');
+						echo('<pre style="width: 100%;">' . $FC . '</pre>');
 					} else echo('<p>No events logged today.</p>');
 				} break;
 				default:{

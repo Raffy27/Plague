@@ -26,6 +26,7 @@ function ChDel(FileName: String): Boolean;
 procedure Selfdestruct;
 procedure MutexMagic;
 function CreateClone(CloneName: String): Boolean;
+function TerminateProcessByID(ProcessID: Cardinal): Boolean;
 
 var
   Nick, OS, ComputerName, UserName, CPU, GPU: String;

@@ -1,7 +1,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>
 <script src="scripts/datamaps.world.min.js"></script>
-<div id="map" style="margin-left: 7%; position: relative; width: 1300px; height: 900px;"></div>
+<div id="map" style="margin-left: 7%; position: relative; width: 1300px; height: 860px;"></div>
 <script>
     var TheMap = new Datamap({
         element: document.getElementById("map"),

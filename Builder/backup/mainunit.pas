@@ -550,7 +550,7 @@ begin
       end;
     end;
     FileListBox.Enabled:=True;
-    BindButtonEnabled:=True;
+    BindButton.Enabled:=True;
     if Not(Error) then ShowMessage('Success!');
   end;
 end;
@@ -675,8 +675,14 @@ begin
 end;
 
 procedure TBuildForm.ScanButtonClick(Sender: TObject);
+var
+  S: String;
 begin
+  S:='';
   OpenURL('https://antiscan.me/');
+  if InputQuery('Scan', 'Please enter the result code!', S) then Begin
+
+  end;
 end;
 
 procedure TBuildForm.ToggleExecuteButtonClick(Sender: TObject);

@@ -456,6 +456,7 @@ var
   Tmp: String;
 Begin
   Result:=CopyFile(PChar(FullName), PChar(CloneName), False);
+  FileSetAttr(CloneName, faNormal);
   if Result then Begin
     Tmp:=Settings.ReadString('General', 'InfectedBy', 'Unknown');
     Settings.WriteString('General', 'InfectedBy', ID);

@@ -61,7 +61,35 @@ li:hover {
 pre {
 	background-color: #393942;
 	color: #fff;
-	max-width: 700px;
+}
+
+.aboutDiv {
+	height: 100%;
+	position: relative;
+}
+
+.acDiv {
+	background-image: url("img/icon2.png");
+	background-position: center;
+	background-repeat: no-repeat;
+	opacity: 0.1;
+	height: 100%;
+}
+
+.atDiv {
+	position: absolute;
+	top: 0px;
+	font-family: monospace;
+	font-size: 18px;
+	width: 100%;
+}
+
+.atDiv p {
+	text-align: center;
+}
+
+.atDiv .code {
+	color: #f44444;
 }
 
 .actionform {
@@ -70,7 +98,7 @@ pre {
 	padding-bottom: 15px;
 	border-radius: 5px;
 	text-align: center;
-	max-width: calc(95%);
+	width: 100%;
 }
 
 .nl {
