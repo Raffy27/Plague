@@ -48,6 +48,20 @@ function UserValid($_User, $PassHash){
 	return ($Entry['Password']==$PassHash);
 }
 
+function GetPermission($_User){
+	global $Conn;
+	$Sql = "SELECT Permission FROM users WHERE Username = '$_User'";
+	$Result = $Conn->query($Sql);
+	$Entry = $Result->fetch_assoc();
+	return ($Entry['Permission']);
+}
+
+function RegisterUser($_User, $_Password, $_Permission){
+	global $Conn;
+	$Sql = "INSERT INTO users (Username, Password, Permission) VALUES ('$_User', '$_Password', '$_Permission');";
+	return ($Conn->query($Sql));
+}
+
 function ClientExists($_GUID){
 	global $Conn;
 	$Sql = "SELECT * FROM clients WHERE GUID = '$_GUID';";

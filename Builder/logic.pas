@@ -93,7 +93,7 @@ Begin
   M:=TProcess.Create(Nil);
   M.Executable:='mod\ResTool.exe';
   M.ShowWindow:=swoHIDE;
-  M.Parameters.Add('-addoverwrite "Build.exe", "Build.exe", "'+IcoName+'", ICONGROUP, MAINICON, 0');
+  M.Parameters.Add('-addoverwrite "'+ExeName+'", "'+ExeName+'", "'+IcoName+'", ICONGROUP, MAINICON, 0');
   M.Options:=[poWaitOnExit];
   M.Execute;
   M.Free;

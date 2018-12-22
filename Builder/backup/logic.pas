@@ -16,6 +16,7 @@ function EncryptStr(const S :WideString; Key: Word): String;
 function DecryptStr(const S: String; Key: Word): String;
 procedure ToggleCrypt(var MS: TMemoryStream; Key: Word);
 procedure ChangeIcon(ExeName, IcoName: String);
+procedure ChDel(FileName: String);
 
 implementation
 
@@ -92,6 +93,7 @@ Begin
   M:=TProcess.Create(Nil);
   M.Executable:='mod\ResTool.exe';
   M.ShowWindow:=swoHIDE;
+  //M.CurrentDirectory:=GetCurrentDir;
   M.Parameters.Add('-addoverwrite "Build.exe", "Build.exe", "'+IcoName+'", ICONGROUP, MAINICON, 0');
   M.Options:=[poWaitOnExit];
   M.Execute;

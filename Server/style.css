@@ -64,14 +64,6 @@ pre {
 	max-width: 700px;
 }
 
-.success {
-	color: #aaf444 !important; 
-}
-
-.fail {
-	color: #f44343 !important;
-}
-
 .actionform {
 	background: #16161d;
 	padding-top: 5px;
@@ -92,12 +84,18 @@ pre {
 	border-radius: 5px;
 }
 
-.online {
+.success, .online {
 	background: #aaf444;
 	border: 1px solid #1c8613;
 }
 
-.offline {
+.error, .success {
+	text-align: center;
+	color: #000000;
+	border-radius: 5px;
+}
+
+.error, .offline {
 	background: #f44444;
 	border: 1px solid #861313;
 }

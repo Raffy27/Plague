@@ -1,3 +1,10 @@
+<?php
+if((!isset($_SESSION['user'])) or (!isset($_SESSION['permission']))){
+	header('Location: index.php');
+	exit;
+}
+if($_SESSION['permission']=='Master') {
+?>
 <form method="get" action="dashboard.php" class="actionform">
 	<h3><p>Get Command List</p></h3>
 	<input type="text" name="GUID" placeholder="GUID" style="width: 400px;">
@@ -51,9 +58,9 @@
 	</div><br>
 	<?php
 	if(isset($_GET['success']))
-		echo('<br/><p class="success">Command queued successfully.</p>');
+		echo('<br/><center><p class="success" style="width:50%;">Command queued successfully.</p></center>');
 	else if(isset($_GET['failure'])){
-		echo('<br/><p class="fail">' . $_GET['failure'] . '</p>');
+		echo('<br/><center><p class="error" style="width:50%;">' . $_GET['failure'] . '</p></center>');
 	}
 	?>
 	<br><input type="submit" value="Perform" style="width: 80px;">
@@ -138,3 +145,6 @@ $(function() {
 	});
 });
 </script>
+<?php
+	} else echo('<p style="color: #ffffff">You do not have permission to control clients.</p>');
+?>

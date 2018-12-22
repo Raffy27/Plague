@@ -8,7 +8,8 @@ include('data.php');
 if(!ConnectDB('plague')){
 	die('Failed to connect to the database.');
 } else { ?>
-<table>
+
+<table id="table">
 	<tr>
 		<th style="width: 56px;">Status</th>
 		<th style="width: 46px;">GUID</th>
@@ -50,5 +51,6 @@ if(!ConnectDB('plague')){
 		}
 	}
 	echo("</table>");
+	echo('<script src="scripts\table_copy.js"</script>');
 }
 ?>

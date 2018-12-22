@@ -1,4 +1,14 @@
 ﻿<?php
+session_start();
+if((!isset($_SESSION['user'])) or (!isset($_SESSION['permission']))){
+	header('Location: index.php');
+	exit;
+}
+if(!($_SESSION['permission']=='Master')) {
+	echo("You do not have permission to control clients.");
+	exit;
+}
+
 include('data.php');
 
 if(isset($_POST['Target'])) $Target = $_POST['Target']; else $Target = '';
