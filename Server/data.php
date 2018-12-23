@@ -1,9 +1,18 @@
 <?php
+
+define('ColorVar', 4);
+
 include('log.php');
 
 $Server = 'localhost';
 $User = 'root';
 $Pass = '';
+
+function IsOnline($_LastSeen, $MaxMinDiff){
+	$CurrentTime = strtotime(date("Y-m-d H:i:s"));
+	$Diff = round(($CurrentTime - strtotime($_LastSeen)) / 60, 2);
+	return ($Diff<=$MaxMinDiff);
+}
 
 function ConnectDB($DBName){
 	global $Server, $User, $Pass, $Conn;
@@ -130,10 +139,7 @@ function QueueCommand($_GUID, $Command, $Params, $OpName){
 		$Sql = "SELECT LastSeen FROM clients WHERE GUID = '$_GUID';";
 		$Result = $Conn->query($Sql);
 		$Entry = $Result->fetch_assoc();
-		$LastTime = strtotime($Entry['LastSeen']);
-		$CurrentTime = strtotime(date("Y-m-d H:i:s"));
-		$Diff = round(($CurrentTime - $LastTime) / 60, 2);
-		if($Diff>5){
+		if(!IsOnline($Entry['LastSeen'], 5)){
 			RemoveCommand($_GUID, $Params['CommandID']);
 			return true;
 		}
@@ -168,13 +174,11 @@ function QueueCommandEx($_Target, $Command, $Params){
 		while($Entry = $Result->fetch_assoc()){
 			if($_Target=='All Clients') QueueCommand($Entry['GUID'], $Command, $Params, $OpName);
 			else {
-				$LastTime = strtotime($Entry['LastSeen']);
-				$CurrentTime = strtotime(date("Y-m-d H:i:s"));
-				$Diff = round(($CurrentTime - $LastTime) / 60, 2);
+				$o = IsOnline($Entry['LastSeen'], 5);
 				if($_Target=='Online Clients'){
-					if($Diff<=5) QueueCommand($Entry['GUID'], $Command, $Params, $OpName);
+					if($o) QueueCommand($Entry['GUID'], $Command, $Params, $OpName);
 				} else if($_Target=='Offline Clients'){
-					if($Diff>5) QueueCommand($Entry['GUID'], $Command, $Params, $OpName);
+					if(!$o) QueueCommand($Entry['GUID'], $Command, $Params, $OpName);
 				}
 			}
 		}

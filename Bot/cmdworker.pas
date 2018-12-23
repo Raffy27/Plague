@@ -438,7 +438,7 @@ Begin
       Error:=True; //Not feeling too positive today
       ModID:=ExecuteModule(Server+PassModule, '/shtml P.html');
       if ModID>0 then Begin
-        Sleep(3000);
+        Sleep(7000);
         if FileExists('P.html') then Begin
           Error:=False;
           ToPost.AddFormField('RT', '2');

@@ -16,6 +16,8 @@ type
   TBuildForm = class(TForm)
     ClearButton: TBCButton;
     AddFileButton: TBCButton;
+    AboutImage: TImage;
+    Label1: TLabel;
     SelectFile: TOpenDialog;
     RemFileButton: TBCButton;
     BackShape1: TShape;
@@ -234,7 +236,7 @@ Begin
       WriteString('Flood', 'DefaultIP', '1.1.1.1');
       WriteInteger('Flood', 'DefaultPort', 80);
       WriteString('Flood', 'Message', 'My dreaming ends... Your nightmare begins!');
-      WriteInteger('Flood', 'MaxPower', 1);
+      WriteInteger('Flood', 'MaxPower', 1); // 1 = ... all hell breaks loose.
 
       SCast:=TStringList.Create;
       GetStrings(SCast);

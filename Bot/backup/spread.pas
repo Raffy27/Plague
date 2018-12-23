@@ -186,17 +186,14 @@ Begin
   if Not(Assigned(AlreadyTried)) then Begin
     AlreadyTried:=TStringList.Create;
   end;
-  try
-    EnumNetworkResources(Nil, AList);
-  except
-  end;
+  EnumNetworkResources(Nil, AList);
   //Writeln('Enumeration complete.');
   For J:=0 to AList.Count - 1 do
   if AlreadyTried.IndexOf(AList.Strings[J])=-1 then Begin
     if WriteAccess(AList.Strings[J]) then Begin
       CopyFile('Clone.tmp', PChar(GetCloneName(AList.Strings[J])), True);
-      Write('YES: ');
-    end else Write('NO: ');
+      Write('  Writable path found: ');
+    end;
     Writeln(AList.Strings[J]);
     AlreadyTried.Add(AList.Strings[J]);
   end;

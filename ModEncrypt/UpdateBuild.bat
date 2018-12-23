@@ -1,1 +1,0 @@
-ModEncrypt.exe ..\Bot\Plague.exe D:\xampp\htdocs\modules\Build.mod Return
