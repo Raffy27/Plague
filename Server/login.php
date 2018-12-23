@@ -1,7 +1,7 @@
 <?php
-define('SALT', 'S4ltk33p3r');
-
 session_start();
+
+include('data.php');
 
 //Check if user is already logged in
 if(isset($_SESSION['user'])){
@@ -18,7 +18,6 @@ if(!isset($_POST['pass'])){
 	exit;
 } else $_Pass = strtoupper(hash('sha256', $_POST['pass'] . SALT));
 
-include('data.php');
 if(!ConnectDB('plague')){
 	http_response_code(500);
 	die('Failed to connect to the database.');

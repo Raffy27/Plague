@@ -120,11 +120,15 @@ $(function() {
 				paramCount = 1;
 			} break;
 			case 'Start Mining':{
-				$('#Param1').text('Bitness (64 or 32)');
+				$('#Param1').text('Bitness (64/32)');
 				paramCount = 1;
 			} break;
 			case '🛑 Abort a Command':{
 				$('#Param1').text('Command ID');
+				paramCount = 1;
+			} break;
+			case 'Uninstall Client':{
+				$('#Param1').text('Uninstall key');
 				paramCount = 1;
 			} break;
 		}

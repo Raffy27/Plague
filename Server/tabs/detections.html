@@ -1,3 +1,10 @@
 <center><br>
-	<img src="https://antiscan.me/images/result/BMwqB8RLYARV.png">
+	<p id="loadLbl">Loading detections...</p>
+	<img id="detImg" src="https://antiscan.me/images/result/BMwqB8RLYARV.png" style="display: none;">
 </center>
+<script>
+	$("#detImg").on("load", function(){
+		$("#loadLbl").hide();
+		$("#detImg").show();
+	});
+</script>

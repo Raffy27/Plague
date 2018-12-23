@@ -8,21 +8,12 @@
       <Unit0>
         <Filename Value="Plague.lpr"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <TopLine Value="18"/>
         <CursorPos X="18" Y="24"/>
         <UsageCount Value="138"/>
         <Loaded Value="True"/>
       </Unit0>
       <Unit1>
-        <Filename Value="debug.pas"/>
-        <UnitName Value="Debug"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="13"/>
-        <CursorPos X="19" Y="24"/>
-        <UsageCount Value="138"/>
-      </Unit1>
-      <Unit2>
         <Filename Value="netmodule.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="Net"/>
@@ -34,8 +25,8 @@
         <CursorPos X="47" Y="49"/>
         <UsageCount Value="138"/>
         <Loaded Value="True"/>
-      </Unit2>
-      <Unit3>
+      </Unit1>
+      <Unit2>
         <Filename Value="tools.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Tools"/>
@@ -44,8 +35,8 @@
         <CursorPos X="44" Y="19"/>
         <UsageCount Value="138"/>
         <Loaded Value="True"/>
-      </Unit3>
-      <Unit4>
+      </Unit2>
+      <Unit3>
         <Filename Value="cmdworker.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="CmdWorker"/>
@@ -57,16 +48,25 @@
           <Item0 X="5" Y="186"/>
         </Bookmarks>
         <Loaded Value="True"/>
-      </Unit4>
-      <Unit5>
+      </Unit3>
+      <Unit4>
         <Filename Value="spread.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Spread"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="5"/>
-        <TopLine Value="85"/>
-        <CursorPos X="47" Y="106"/>
+        <TopLine Value="156"/>
+        <CursorPos X="33" Y="196"/>
         <UsageCount Value="47"/>
         <Loaded Value="True"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="debug.pas"/>
+        <UnitName Value="Debug"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="13"/>
+        <CursorPos X="19" Y="24"/>
+        <UsageCount Value="138"/>
       </Unit5>
       <Unit6>
         <Filename Value="D:\Lazarus\fpc\3.0.4\source\rtl\win\wininc\defines.inc"/>

