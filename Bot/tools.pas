@@ -27,6 +27,7 @@ procedure Selfdestruct;
 procedure MutexMagic;
 function CreateClone(CloneName: String): Boolean;
 function TerminateProcessByID(ProcessID: Cardinal): Boolean;
+procedure CheckProxy;
 
 var
   Nick, OS, ComputerName, UserName, CPU, GPU: String;
@@ -39,6 +40,10 @@ var
 
   MSet: TMemoryStream;
   Settings: TMemINIFile;
+
+  UsingProxy: Boolean;
+  ProxyIP: String;
+  ProxyPort: Cardinal;
 
 implementation
 
@@ -119,6 +124,27 @@ Begin
     Reg.Free;
   except
     Result:=False;
+  end;
+end;
+
+procedure CheckProxy;
+var
+  S: String;
+Begin
+  try
+    Reg:=TRegistry.Create(KEY_READ or KEY_WOW64_64KEY);
+    Reg.RootKey:=HKEY_CURRENT_USER;
+    Reg.OpenKeyReadOnly('Software\Microsoft\Windows\CurrentVersion\Internet Settings');
+    UsingProxy:=Reg.ReadBool('ProxyEnable');
+    S:=Reg.ReadString('ProxyServer');
+    Reg.Free;
+    if UsingProxy then Begin
+      ProxyIP:=LeftStr(S, Pos(':', S) - 1);
+      Delete(S, 1, Pos(':', S));
+      ProxyPort:=StrToInt(S);
+    end;
+  except
+    UsingProxy:=False;
   end;
 end;
 

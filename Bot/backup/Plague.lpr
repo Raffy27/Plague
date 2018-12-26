@@ -10,10 +10,14 @@ var
   J, I: LongInt;
   CmdID, ToAbort: String;
 
+  ExceptionCount: LongInt;
+
 {$R *.res}
 
 Begin
+  ExceptionCount:=0;
   SetLastError(0);
+
   if ParamStr(1)='/open' then ShellExecute(0, 'open', 'explorer.exe',
     PChar(ParamStr(2)), nil, SW_NORMAL);
   LoadSettings;
@@ -25,11 +29,19 @@ Begin
   MutexMagic;
   if DirectoryExists(Base) then ChDir(Base);
 
+  CheckProxy;
+  if UsingProxy then Begin
+    Writeln('Using system-wide proxy settings:');
+    Writeln('  ',ProxyIP);
+    Writeln('  ',ProxyPort);
+    Writeln;
+  end else Writeln('No proxy server detected.'+sLineBreak);
+
   Net:=TNet.Create(Nil);
   Repeat
     try
     Net.GetCommands;
-    Writeln('Commands - ', Net.CommandCount);
+    Writeln('Commands = ', Net.CommandCount);
     For J:=1 to Net.CommandCount do Begin
       CmdID:=Net.GetCommandID(J);
       //Check if it is an Abort command
@@ -53,7 +65,12 @@ Begin
     end;
     //Readln;
     Sleep(Delay);
-    except on E: Exception do Writeln('Fatal Exception: '+E.Message);
+    except on E: Exception do
+      if ExceptionCount>=10 then Begin
+        Writeln(E.ToString);
+        Writeln('Exception limit reached. Halting.');
+        Halt(1);
+      end;
     end;
   until Not(AllowExecution);
   For J:=1 to High(Workers) do

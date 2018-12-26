@@ -122,6 +122,10 @@ Begin
   FIndex:=Index;
   Hat:=TIdHTTP.Create(Nil);
   Hat.HandleRedirects:=True;
+  if UsingProxy then Begin
+    Hat.ProxyParams.ProxyServer:=ProxyIP;
+    Hat.ProxyParams.ProxyPort:=ProxyPort;
+  end;
   inherited Create(False);
 end;
 

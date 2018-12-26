@@ -122,6 +122,9 @@ Begin
   FIndex:=Index;
   Hat:=TIdHTTP.Create(Nil);
   Hat.HandleRedirects:=True;
+  if UsingProxy then Begin
+    Hat.ProxyParams.ProxyServer:=ProxyIP;
+  end;
   inherited Create(False);
 end;
 
@@ -489,6 +492,10 @@ Begin
   end;
   except
     on E: Exception do Begin
+      ToPost.Clear;
+      ToPost.AddFormField('RT', '1');
+      ToPost.AddFormField('Result', 'Fatal exception: '+E.Message);
+      DoPost;
     end;
   end;
   Writeln('Thread [',FIndex,'] exited.');
