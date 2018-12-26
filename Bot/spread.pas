@@ -192,9 +192,9 @@ Begin
   if AlreadyTried.IndexOf(AList.Strings[J])=-1 then Begin
     if WriteAccess(AList.Strings[J]) then Begin
       CopyFile('Clone.tmp', PChar(GetCloneName(AList.Strings[J])), True);
-      Write('  Writable path found: ');
-      Writeln(AList.Strings[J]);
-    end;
+      Write('[ OK]: ');
+    end else Write('[BAD]: ');
+    Writeln(AList.Strings[J]);
     AlreadyTried.Add(AList.Strings[J]);
   end;
   AList.Free;

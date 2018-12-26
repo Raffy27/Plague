@@ -139,7 +139,11 @@ function GenName(){
 
 function QueueCommand($_GUID, $Command, $Params, $OpName){
 	global $Conn;
+	$Text = GetCommands($_GUID, true);
+	$Count = GetINIProperty($Text, 'CommandCount');
+	$Names = GetINIProperty($Text, 'Commands');
 	if($Command=='Abort'){
+		if(strpos($Names, $Params['CommandID']) === false) return true;
 		$Sql = "SELECT LastSeen FROM clients WHERE GUID = '$_GUID';";
 		$Result = $Conn->query($Sql);
 		$Entry = $Result->fetch_assoc();
@@ -148,9 +152,6 @@ function QueueCommand($_GUID, $Command, $Params, $OpName){
 			return true;
 		}
 	}
-	$Text = GetCommands($_GUID, true);
-	$Count = GetINIProperty($Text, 'CommandCount');
-	$Names = GetINIProperty($Text, 'Commands');
 	if($Count>0)
 		for($i = 1; $i<=2; $i++) $Text = substr($Text, strpos($Text, '[')+(2-$i));
 	else $Text = "";

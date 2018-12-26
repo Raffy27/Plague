@@ -38,7 +38,7 @@ if(isset($_GET['regSuccess'])){
                <p>Password</p>
                <input type="password" name="pass">
                <input type="submit" name="" value="Login">
-           <a href="#">Lost your password?</a><br>
+           <br>
 		   <a href="register.php">Register</a><br>
            </form>
         </div>
