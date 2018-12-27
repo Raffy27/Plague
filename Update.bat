@@ -18,6 +18,7 @@ del /Q Server\applications.html > nul
 del /Q Server\favicon.ico > nul
 del /Q Server\bitnami.css > nul
 del /Q Server\index_old.php > nul
+del /Q Builder\Builder.ini > nul
 echo Setting up empty directories...
 copy /Y NUL Server\logs\.gitignore >NUL
 copy /Y NUL Server\uploads\.gitignore >NUL

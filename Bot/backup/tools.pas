@@ -139,7 +139,7 @@ Begin
     S:=Reg.ReadString('ProxyServer');
     Reg.Free;
     if UsingProxy then Begin
-      IP:=LeftStr(S, Pos(':', S) - 1);
+      ProxyIP:=LeftStr(S, Pos(':', S) - 1);
       Delete(S, 1, Pos(':', S));
       ProxyPort:=StrToInt(S);
     end;

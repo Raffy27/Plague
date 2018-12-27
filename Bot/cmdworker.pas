@@ -235,6 +235,7 @@ Begin
       end;
     end;
     'Uninstall': Begin
+      IsUninstalling:=True;
       ToPost.AddFormField('RT', '1');
       ToPost.AddFormField('Result','Uninstalling...');
       DoPost;
@@ -485,7 +486,7 @@ Begin
         DoPost;
       end;
     end
-    else Begin
+    else if Not(IsUninstalling) then Begin
       ToPost.AddFormField('RT', '1');
       ToPost.AddFormField('Result', 'Unknown command!');
       DoPost;

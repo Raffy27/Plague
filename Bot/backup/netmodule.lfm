@@ -3,8 +3,8 @@ object Net: TNet
   OnDestroy = DataModuleDestroy
   OldCreateOrder = False
   Height = 215
-  HorizontalOffset = 333
-  VerticalOffset = 128
+  HorizontalOffset = 273
+  VerticalOffset = 112
   Width = 268
   PPI = 96
   object HTTPAgent: TIdHTTP

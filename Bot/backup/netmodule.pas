@@ -76,6 +76,10 @@ end;
 procedure TNet.DataModuleCreate(Sender: TObject);
 begin
   Commands:=TMemINIFile.Create('');
+  if UsingProxy then Begin
+    HTTPAgent.ProxyParams.ProxyServer:=ProxyIP;
+    HTTPAgent.ProxyParams.ProxyPort:=ProxyPort;
+  end;
 end;
 
 procedure TNet.DataModuleDestroy(Sender: TObject);

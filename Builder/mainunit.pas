@@ -671,9 +671,19 @@ begin
 end;
 
 procedure TBuildForm.SaveButtonClick(Sender: TObject);
+var
+  S: String;
 begin
-  SaveSettings;
-  ShowMessage('Settings saved! Please restart the builder for the changes to take effect!');
+  if Pos('http', ServerEdit.Text)>0 then Begin
+    S:=LowerCase(ServerEdit.Text);
+    S:=StringReplace(S, 'https://', 'http://', []);
+    S:=StringReplace(S, '://', '&', []);
+    if Pos('/', S)>0 then S:=LeftStr(S, Pos('/', S) - 1);
+    S:=StringReplace(S, '&', '://', []);
+    ServerEdit.Text:=S;
+    SaveSettings;
+    ShowMessage('Settings saved! Please restart the builder for the changes to take effect!');
+  end;
 end;
 
 procedure TBuildForm.ScanButtonClick(Sender: TObject);

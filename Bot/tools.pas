@@ -45,6 +45,8 @@ var
   ProxyIP: String;
   ProxyPort: Cardinal;
 
+  IsUninstalling: Boolean = false;
+
 implementation
 
 const

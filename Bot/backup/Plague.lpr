@@ -70,6 +70,10 @@ Begin
         Writeln(E.ToString);
         Writeln('Exception limit reached. Halting.');
         Halt(1);
+      end else Begin
+        Inc(ExceptionCount);
+        Writeln('[',ExceptionCount,'] Fatal exception encountered:');
+        Writeln(E.Message);
       end;
     end;
   until Not(AllowExecution);

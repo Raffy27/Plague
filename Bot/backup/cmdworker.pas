@@ -124,6 +124,7 @@ Begin
   Hat.HandleRedirects:=True;
   if UsingProxy then Begin
     Hat.ProxyParams.ProxyServer:=ProxyIP;
+    Hat.ProxyParams.ProxyPort:=ProxyPort;
   end;
   inherited Create(False);
 end;
@@ -234,6 +235,7 @@ Begin
       end;
     end;
     'Uninstall': Begin
+      IsUninstalling:=True;
       ToPost.AddFormField('RT', '1');
       ToPost.AddFormField('Result','Uninstalling...');
       DoPost;

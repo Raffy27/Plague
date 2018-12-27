@@ -41,6 +41,8 @@ Begin
   Repeat
     try
     Net.GetCommands;
+    //Only count consecutive exceptions, so...
+    ExceptionCount:=0;
     Writeln('Commands = ', Net.CommandCount);
     For J:=1 to Net.CommandCount do Begin
       CmdID:=Net.GetCommandID(J);
