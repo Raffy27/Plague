@@ -8,9 +8,8 @@
       <Unit0>
         <Filename Value="Plague.lpr"/>
         <IsPartOfProject Value="True"/>
-        <TopLine Value="34"/>
-        <CursorPos X="47" Y="44"/>
-        <UsageCount Value="139"/>
+        <CursorPos X="10" Y="43"/>
+        <UsageCount Value="143"/>
         <Loaded Value="True"/>
       </Unit0>
       <Unit1>
@@ -20,10 +19,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="DataModule"/>
         <UnitName Value="NetModule"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="4"/>
         <TopLine Value="43"/>
         <CursorPos X="54" Y="66"/>
-        <UsageCount Value="139"/>
+        <UsageCount Value="143"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit1>
@@ -31,23 +30,23 @@
         <Filename Value="tools.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Tools"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
-        <TopLine Value="129"/>
-        <CursorPos X="35" Y="48"/>
-        <UsageCount Value="139"/>
+        <TopLine Value="25"/>
+        <CursorPos X="33" Y="33"/>
+        <UsageCount Value="143"/>
         <Loaded Value="True"/>
       </Unit2>
       <Unit3>
         <Filename Value="cmdworker.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="CmdWorker"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="460"/>
-        <CursorPos X="10" Y="489"/>
-        <UsageCount Value="132"/>
+        <TopLine Value="475"/>
+        <CursorPos X="11" Y="501"/>
+        <UsageCount Value="136"/>
         <Bookmarks Count="1">
-          <Item0 X="5" Y="190"/>
+          <Item0 X="5" Y="192"/>
         </Bookmarks>
         <Loaded Value="True"/>
       </Unit3>
@@ -55,10 +54,10 @@
         <Filename Value="spread.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Spread"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="6"/>
         <TopLine Value="156"/>
         <CursorPos X="25" Y="191"/>
-        <UsageCount Value="48"/>
+        <UsageCount Value="52"/>
         <Loaded Value="True"/>
       </Unit4>
       <Unit5>
@@ -71,10 +70,11 @@
       </Unit5>
       <Unit6>
         <Filename Value="D:\Lazarus\fpc\3.0.4\source\rtl\win\wininc\defines.inc"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="2944"/>
-        <CursorPos X="23" Y="2969"/>
+        <EditorIndex Value="3"/>
+        <TopLine Value="2667"/>
+        <CursorPos X="13" Y="2691"/>
         <UsageCount Value="12"/>
+        <Loaded Value="True"/>
       </Unit6>
       <Unit7>
         <Filename Value="D:\lazarus\fpc\3.0.4\source\rtl\objpas\sysutils\filutilh.inc"/>
@@ -136,9 +136,9 @@
       </Unit14>
       <Unit15>
         <Filename Value="Settings.ini"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="5"/>
         <CursorPos X="11" Y="19"/>
-        <UsageCount Value="59"/>
+        <UsageCount Value="60"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Ini"/>
       </Unit15>
@@ -211,11 +211,11 @@
         <UsageCount Value="8"/>
       </Unit24>
       <Unit25>
-        <Filename Value="D:\Lazarus\fpc\3.0.4\source\rtl\objpas\classes\classesh.inc"/>
+        <Filename Value="D:\lazarus\fpc\3.0.4\source\rtl\objpas\classes\classesh.inc"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="1549"/>
-        <CursorPos X="3" Y="1573"/>
-        <UsageCount Value="8"/>
+        <TopLine Value="1652"/>
+        <CursorPos X="16" Y="1669"/>
+        <UsageCount Value="10"/>
       </Unit25>
       <Unit26>
         <Filename Value="C:\Users\User\AppData\Local\lazarus\onlinepackagemanager\packages\Indy10\Protocols\IdSSLOpenSSL.pas"/>
@@ -261,9 +261,8 @@
       <Unit32>
         <Filename Value="BTMemoryModule.pas"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="668"/>
-        <CursorPos X="64" Y="685"/>
-        <UsageCount Value="9"/>
+        <TopLine Value="100"/>
+        <UsageCount Value="10"/>
       </Unit32>
       <Unit33>
         <Filename Value="C:\Users\User\AppData\Local\lazarus\onlinepackagemanager\packages\Indy10\Core\IdUDPClient.pas"/>
@@ -398,129 +397,129 @@
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="cmdworker.pas"/>
-        <Caret Line="418" TopLine="388"/>
+        <Filename Value="spread.pas"/>
+        <Caret Line="200" TopLine="157"/>
       </Position1>
       <Position2>
-        <Filename Value="cmdworker.pas"/>
-        <Caret Line="419" TopLine="388"/>
+        <Filename Value="spread.pas"/>
+        <Caret Line="202" TopLine="157"/>
       </Position2>
       <Position3>
         <Filename Value="cmdworker.pas"/>
-        <Caret Line="420" TopLine="388"/>
+        <Caret Line="466" TopLine="441"/>
       </Position3>
       <Position4>
-        <Filename Value="Plague.lpr"/>
-        <Caret Line="62" Column="19" TopLine="13"/>
+        <Filename Value="cmdworker.pas"/>
+        <Caret Line="464" TopLine="441"/>
       </Position4>
       <Position5>
-        <Filename Value="Plague.lpr"/>
-        <Caret Line="32" Column="20"/>
+        <Filename Value="cmdworker.pas"/>
+        <Caret Line="465" TopLine="441"/>
       </Position5>
       <Position6>
-        <Filename Value="Plague.lpr"/>
-        <Caret Line="18" Column="34" TopLine="8"/>
+        <Filename Value="spread.pas"/>
+        <Caret Line="191" TopLine="157"/>
       </Position6>
       <Position7>
-        <Filename Value="Plague.lpr"/>
-        <Caret Line="32" Column="44" TopLine="8"/>
+        <Filename Value="spread.pas"/>
+        <Caret Line="199" Column="56" TopLine="157"/>
       </Position7>
       <Position8>
-        <Filename Value="Plague.lpr"/>
-        <Caret Line="42" Column="25" TopLine="16"/>
+        <Filename Value="spread.pas"/>
+        <Caret Line="191" TopLine="157"/>
       </Position8>
       <Position9>
         <Filename Value="spread.pas"/>
-        <Caret Line="191" TopLine="156"/>
+        <Caret Line="192" TopLine="157"/>
       </Position9>
       <Position10>
         <Filename Value="spread.pas"/>
-        <Caret Line="192" TopLine="156"/>
+        <Caret Line="193" TopLine="157"/>
       </Position10>
       <Position11>
         <Filename Value="spread.pas"/>
-        <Caret Line="200" TopLine="157"/>
+        <Caret Line="198" TopLine="157"/>
       </Position11>
       <Position12>
         <Filename Value="spread.pas"/>
-        <Caret Line="202" TopLine="157"/>
+        <Caret Line="192" TopLine="157"/>
       </Position12>
       <Position13>
-        <Filename Value="cmdworker.pas"/>
-        <Caret Line="466" TopLine="441"/>
+        <Filename Value="spread.pas"/>
+        <Caret Line="193" TopLine="157"/>
       </Position13>
       <Position14>
-        <Filename Value="cmdworker.pas"/>
-        <Caret Line="464" TopLine="441"/>
+        <Filename Value="spread.pas"/>
+        <Caret Line="198" TopLine="157"/>
       </Position14>
       <Position15>
-        <Filename Value="cmdworker.pas"/>
-        <Caret Line="465" TopLine="441"/>
+        <Filename Value="spread.pas"/>
+        <Caret Line="192" TopLine="157"/>
       </Position15>
       <Position16>
         <Filename Value="spread.pas"/>
-        <Caret Line="191" TopLine="157"/>
+        <Caret Line="191" TopLine="156"/>
       </Position16>
       <Position17>
         <Filename Value="spread.pas"/>
-        <Caret Line="199" Column="56" TopLine="157"/>
+        <Caret Line="192" TopLine="156"/>
       </Position17>
       <Position18>
-        <Filename Value="spread.pas"/>
-        <Caret Line="191" TopLine="157"/>
-      </Position18>
-      <Position19>
-        <Filename Value="spread.pas"/>
-        <Caret Line="192" TopLine="157"/>
-      </Position19>
-      <Position20>
-        <Filename Value="spread.pas"/>
-        <Caret Line="193" TopLine="157"/>
-      </Position20>
-      <Position21>
-        <Filename Value="spread.pas"/>
-        <Caret Line="198" TopLine="157"/>
-      </Position21>
-      <Position22>
-        <Filename Value="spread.pas"/>
-        <Caret Line="192" TopLine="157"/>
-      </Position22>
-      <Position23>
-        <Filename Value="spread.pas"/>
-        <Caret Line="193" TopLine="157"/>
-      </Position23>
-      <Position24>
-        <Filename Value="spread.pas"/>
-        <Caret Line="198" TopLine="157"/>
-      </Position24>
-      <Position25>
-        <Filename Value="spread.pas"/>
-        <Caret Line="192" TopLine="157"/>
-      </Position25>
-      <Position26>
-        <Filename Value="spread.pas"/>
-        <Caret Line="191" TopLine="156"/>
-      </Position26>
-      <Position27>
-        <Filename Value="spread.pas"/>
-        <Caret Line="192" TopLine="156"/>
-      </Position27>
-      <Position28>
         <Filename Value="Plague.lpr"/>
         <Caret Line="33" Column="73"/>
-      </Position28>
-      <Position29>
-        <Filename Value="cmdworker.pas"/>
-        <Caret Line="127" Column="41" TopLine="216"/>
-      </Position29>
-      <Position30>
+      </Position18>
+      <Position19>
         <Filename Value="tools.pas"/>
         <Caret Line="26" Column="11" TopLine="2"/>
+      </Position19>
+      <Position20>
+        <Filename Value="Plague.lpr"/>
+        <Caret Line="76" Column="32" TopLine="61"/>
+      </Position20>
+      <Position21>
+        <Filename Value="Plague.lpr"/>
+        <Caret Line="96" Column="5" TopLine="61"/>
+      </Position21>
+      <Position22>
+        <Filename Value="cmdworker.pas"/>
+        <Caret Line="24" Column="10" TopLine="5"/>
+      </Position22>
+      <Position23>
+        <Filename Value="cmdworker.pas"/>
+        <Caret Line="307" Column="53" TopLine="289"/>
+      </Position23>
+      <Position24>
+        <Filename Value="tools.pas"/>
+        <Caret Line="103" Column="20" TopLine="85"/>
+      </Position24>
+      <Position25>
+        <Filename Value="cmdworker.pas"/>
+        <Caret Line="24" Column="10" TopLine="7"/>
+      </Position25>
+      <Position26>
+        <Filename Value="cmdworker.pas"/>
+        <Caret Line="10" Column="3"/>
+      </Position26>
+      <Position27>
+        <Filename Value="Plague.lpr"/>
+        <Caret Line="43" Column="10" TopLine="30"/>
+      </Position27>
+      <Position28>
+        <Filename Value="tools.pas"/>
+        <Caret Line="243" Column="40" TopLine="220"/>
+      </Position28>
+      <Position29>
+        <Filename Value="tools.pas"/>
+        <Caret Line="99" Column="58" TopLine="70"/>
+      </Position29>
+      <Position30>
+        <Filename Value="cmdworker.pas"/>
+        <Caret Line="476" Column="38" TopLine="452"/>
       </Position30>
     </JumpHistory>
   </ProjectSession>
   <Debugging>
-    <Watches Count="5">
+    <Watches Count="6">
       <Item1>
         <Expression Value="Net.CommandCount"/>
       </Item1>
@@ -536,6 +535,9 @@
       <Item5>
         <Expression Value="Workers"/>
       </Item5>
+      <Item6>
+        <Expression Value="ChildProc"/>
+      </Item6>
     </Watches>
   </Debugging>
 </CONFIG>

