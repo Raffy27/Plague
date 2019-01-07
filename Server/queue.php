@@ -55,6 +55,11 @@ switch($Cmd){
 		CheckParam();
 		$ParamArray = array('URL'=>$_POST['Param1']);
 	} break;
+	case 'Update Secondary Mapping':{
+		$Cmd = 'UpdateMap';
+		CheckParam();
+		$ParamArray = array('URL'=>$_POST['Param1']);
+	} break;
 	case 'Uninstall Client':{
 		$Cmd = 'Uninstall';
 		CheckParam();

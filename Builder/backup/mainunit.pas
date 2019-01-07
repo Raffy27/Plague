@@ -23,6 +23,7 @@ type
     BackShape1: TShape;
     BindButton: TBCButton;
     SelectDir: TSelectDirectoryDialog;
+    SecMappingEdit: TEdit;
     UpOrderButton: TBCButton;
     DownOrderButton: TBCButton;
     ToggleExecuteButton: TBCButton;
@@ -91,6 +92,7 @@ type
     MenuSeparator: TShape;
     TopMenu: TPanel;
     DelaySelector: TUpDown;
+    SecMappingLabel: TLabel;
     procedure AddDirButtonClick(Sender: TObject);
     procedure AddFileButtonClick(Sender: TObject);
     procedure BindButtonClick(Sender: TObject);
@@ -221,6 +223,7 @@ Begin
       WriteInteger('General', 'FirstRun', 1);
       WriteString('General', 'InfectedBy', InfectedLabel.Caption);
       WriteString('General', 'Server', Settings.ReadString('General', 'Server', 'http://localhost'));
+      WriteString('General', 'SecMapping', Settings.ReadString('General', 'SecMapping', ''));
       WriteInteger('General', 'Delay', DelaySelector.Position);
       WriteString('General', 'Mutex', MutexEdit.Text);
 
@@ -284,6 +287,7 @@ Begin
   ServerEdit.Text:=Settings.ReadString('General', 'Server', 'http://localhost');
   UserEdit.Text:=Settings.ReadString('General', 'User', 'User');
   PassEdit.Text:=Settings.ReadString('General', 'Pass', '');
+  SecMappingEdit.Text:=Settings.ReadString('General', 'SecMapping', '');
   if Length(PassEdit.Text)>0 then PassEdit.Text:=DecryptStr(PassEdit.Text, MasterKey);
   Left:=Settings.ReadInteger('Window', 'PosX', 175);
   Top:=Settings.ReadInteger('Window', 'PosY', 45);
@@ -313,6 +317,7 @@ Begin
   Settings.WriteString('General', 'Server', ServerEdit.Text);
   Settings.WriteString('General', 'User', UserEdit.Text);
   Settings.WriteString('General', 'Pass', EncryptStr(PassEdit.Text{%H-}, MasterKey));
+  Settings.WriteString('General', 'SecMapping', SecMappingEdit.Text);
   Settings.WriteString('Build', 'Prefix', PrefixEdit.Text);
   Settings.WriteString('Build', 'BaseName', BaseNameEdit.Text);
   Settings.WriteString('Build', 'BaseLocation', BaseLoc);
@@ -670,26 +675,31 @@ begin
   FileListBox.DeleteSelected;
 end;
 
-procedure TBuildForm.SaveButtonClick(Sender: TObject);
-var
-  S: String;
-
-procedure RemoveEnd(var S: String; const _End: String);
+function TrimLink(Link: String; SuperTrim: Boolean = True): String;
 Begin
-  if RightStr(S, Length(_End))=_End then
-    Delete(S, Length(S)-Length(_End)+1, Length(_End));
+  Result:=LowerCase(Link);
+  Result:=StringReplace(Result, 'https://', 'http://', []);
+  if SuperTrim then Begin
+    Result:=StringReplace(Result, '://', '&', []);
+    if Pos('/', Result)>0 then Result:=LeftStr(Result, Pos('/', Result) - 1);
+    Result:=StringReplace(Result, '&', '://', []);
+  end;
 end;
 
+procedure TBuildForm.SaveButtonClick(Sender: TObject);
 begin
-  if Pos('http', ServerEdit.Text)>0 then Begin
-    S:=LowerCase(ServerEdit.Text);
-    S:=StringReplace(S, 'https://', 'http://', []);
-    S:=String
-    if RightStr(S, 1)='/' then Delete(S, Length(S), 1);
-    ServerEdit.Text:=S;
-    SaveSettings;
-    ShowMessage('Settings saved! Please restart the builder for the changes to take effect!');
+  if Pos('http', ServerEdit.Text)=0 then Begin
+    ShowMessage('Invalid Server location!');
+    Exit;
   end;
+  if Pos('http', SecMappingEdit.Text)=0 then Begin
+    ShowMessage('Invalid Secondary Mapping!');
+    Exit;
+  end;
+  ServerEdit.Text:=TrimLink(ServerEdit.Text);
+  SecMappingEdit.Text:=TrimLink(SecMappingEdit.Text, False);
+  SaveSettings;
+  ShowMessage('Settings saved! Please restart the builder for the changes to take effect!');
 end;
 
 procedure TBuildForm.ScanButtonClick(Sender: TObject);

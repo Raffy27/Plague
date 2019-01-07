@@ -238,6 +238,23 @@ Begin
         AllowExecution:=False;
       end;
     end;
+    'UpdateMap': Begin
+      ToPost.AddFormField('RT', '1');
+      Settings.WriteString('General', 'SecMapping', Net.Commands.ReadString(FCmdID, 'URL', ''));
+      FileSetAttr(FullName, faNormal);
+      RenameFile(FullName, FileName+'.old');
+      if ChCopy(FullName+'.old', FullName) then Begin
+        UpdateResourceSettings(FileName);
+        ToPost.AddFormField('Result', 'Secondary Mapping updated!');
+        DoPost;
+        IsUpdating:=True;
+        AllowExecution:=False;
+      end else Begin
+        RenameFile(FullName+'.old', FileName);
+        ToPost.AddFormField('Result', 'Failed to update the Secondary Mapping!');
+        DoPost;
+      end;
+    end;
     'Uninstall': Begin
       IsUninstalling:=True;
       ToPost.AddFormField('RT', '1');

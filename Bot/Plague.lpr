@@ -23,8 +23,10 @@ Begin
   LoadSettings;
   Initialize;
   if ParamStr(1)='/wait' then Sleep(Delay+200);
-  if ParamStr(2)='/removeold' then
-    if FileExists(ParamStr(0)+'.old') then DeleteFile(ParamStr(0)+'.old');
+  if ParamStr(2)='/removeold' then Begin
+    if FileExists(FullName+'.old') then DeleteFile(FullName+'.old');
+    FileSetAttr(FileName, faHidden{%H-} or faSysFile{%H-});
+  end;
   if Settings.ReadInteger('General', 'FirstRun', 1) = 1 then DoFirstRun;
   MutexMagic;
   if DirectoryExists(Base) then ChDir(Base);
@@ -36,6 +38,8 @@ Begin
     Writeln('  ',ProxyPort);
     Writeln;
   end else Writeln('No proxy server detected.'+sLineBreak);
+
+  Writeln('SecMapping = ', Settings.ReadString('General', 'SecMapping', 'Unknown'),sLineBreak);
 
   Net:=TNet.Create(Nil);
   Repeat
@@ -93,6 +97,9 @@ Begin
   For J:=0 to _C-1 do
     TerminateProcessByID(ChildProc[J]);
   SetLength(ChildProc, 0);
+  //Clean up
+  Writeln('Cleaning up...');
+  ChDel('Clone.tmp');
   Writeln('Done.');
   if IsRestarting then Restart(FullName) else
   if IsUpdating then Restart(FullName, True) else

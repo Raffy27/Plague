@@ -6113,6 +6113,37 @@ object BuildForm: TBuildForm
       TextApplyGlobalOpacity = False
       MemoryUsage = bmuHigh
     end
+    object SecMappingLabel: TLabel
+      AnchorSideLeft.Control = SettingsPanel
+      Left = 15
+      Height = 18
+      Top = 128
+      Width = 129
+      BorderSpacing.Left = 15
+      BorderSpacing.Top = 10
+      Caption = 'Secondary Mapping: '
+      ParentColor = False
+    end
+    object SecMappingEdit: TEdit
+      AnchorSideLeft.Control = SecMappingLabel
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideRight.Control = SettingsPanel
+      AnchorSideRight.Side = asrBottom
+      Left = 159
+      Height = 18
+      Top = 128
+      Width = 342
+      Alignment = taCenter
+      Anchors = [akTop, akLeft, akRight]
+      AutoSelect = False
+      BorderSpacing.Left = 15
+      BorderSpacing.Right = 15
+      BorderStyle = bsNone
+      Color = 1051660
+      TabStop = False
+      TabOrder = 3
+      TextHint = 'http://pastebin.com/raw/n4Q5Cfxq'
+    end
   end
   object IconDialog: TOpenDialog
     Title = 'Load'

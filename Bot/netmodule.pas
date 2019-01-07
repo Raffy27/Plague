@@ -23,6 +23,7 @@ type
 
     procedure GetCommands;
     function GetCommandID(Index: LongInt): String;
+    procedure SwitchToSec;
   end;
 
 const
@@ -35,6 +36,7 @@ const
 
 var
   Net: TNet;
+  NExCount: Byte;
 
 implementation
 
@@ -54,15 +56,43 @@ Begin
   else Result:=S;
 end;
 
+procedure TNet.SwitchToSec;
+var
+  L: String;
+Begin
+  NExCount:=0;
+  try
+    L:=HTTPAgent.Get(Settings.ReadString('General', 'SecMapping', ''));
+    Writeln('Secondary Mapping --> "',L,'"');
+    if Pos('http', L)>0 then Begin
+      L:=StringReplace(L, 'https://', 'http://', [rfIgnoreCase]);
+      if RightStr(L, 1)='/' then Delete(L, Length(L), 1);
+      //Set the new Server location
+      Server:=L;
+    end;
+  except
+  end;
+end;
+
 procedure TNet.GetCommands;
 var
   MS: TMemoryStream;
   S: TStringList;
+  PExCount: Byte;
 Begin
+  PExCount:=NExCount;
   MS:=TMemoryStream.Create;
   S:=TStringList.Create;
   try
-    HTTPAgent.Get(Server+CommandsPHP+'?GUID='+ID, MS);
+    try
+      HTTPAgent.Get(Server+CommandsPHP+'?GUID='+ID, MS);
+    except on E: Exception do Begin
+      NExCount += 1;
+      Writeln('[',NExCount,'] Server unreachable');
+      if NExCount>=5 then SwitchToSec;
+    end;
+    end;
+    if PExCount=NExCount then NExCount:=0; //Consecutive exceptions only
     MS.Position:=0;
     S.LoadFromStream(MS);
     Commands.SetStrings(S);
@@ -75,6 +105,7 @@ end;
 
 procedure TNet.DataModuleCreate(Sender: TObject);
 begin
+  NExCount:=0;
   Commands:=TMemINIFile.Create('');
   if UsingProxy then Begin
     HTTPAgent.ProxyParams.ProxyServer:=ProxyIP;

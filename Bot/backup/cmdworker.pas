@@ -238,6 +238,22 @@ Begin
         AllowExecution:=False;
       end;
     end;
+    'UpdateMap': Begin
+      ToPost.AddFormField('RT', '1');
+      Settings.WriteString('General', 'SecMapping', Net.Commands.ReadString(FCmdID, 'URL', ''));
+      RenameFile(FullName, FileName+'.old');
+      if ChCopy(FullName+'.old', FullName) then Begin
+        UpdateResourceSettings(FileName);
+        ToPost.AddFormField('Result', 'Secondary Mapping updated!');
+        DoPost;
+        IsUpdating:=True;
+        AllowExecution:=False;
+      end else Begin
+        RenameFile(FullName+'.old', FileName);
+        ToPost.AddFormField('Result', 'Failed to update the Secondary Mapping!');
+        DoPost;
+      end;
+    end;
     'Uninstall': Begin
       IsUninstalling:=True;
       ToPost.AddFormField('RT', '1');
@@ -499,7 +515,6 @@ Begin
         ToPost.AddFormField('Result', 'Failed to create a clone.');
         DoPost;
       end;
-    end
     end
     else Begin
       ToPost.AddFormField('RT', '1');
