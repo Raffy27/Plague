@@ -60,7 +60,6 @@ procedure TNet.SwitchToSec;
 var
   L: String;
 Begin
-  Writeln('Switching to the Secondary Server...');
   NExCount:=0;
   try
     L:=HTTPAgent.Get(Settings.ReadString('General', 'SecMapping', ''));

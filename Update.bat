@@ -10,7 +10,7 @@ echo Cleaning up...
 del /S /Q Server\dashboard\*.* > nul
 rmdir /S /Q Server\dashboard > nul
 del /Q Server\logs\*.* > nul
-del /Q Server\uploads\*.* > nul
+rem del /Q Server\uploads\*.* > nul
 rmdir Server\webalizer > nul
 del /S /Q Server\xampp\*.* > nul
 rmdir Server\xampp > nul
@@ -18,10 +18,10 @@ del /Q Server\applications.html > nul
 del /Q Server\favicon.ico > nul
 del /Q Server\bitnami.css > nul
 del /Q Server\index_old.php > nul
-rem del /Q Builder\Builder.ini > nul
+del /Q Builder\Builder.ini > nul
 echo Setting up empty directories...
 copy /Y NUL Server\logs\.gitignore >NUL
-copy /Y NUL Server\uploads\.gitignore >NUL
+rem copy /Y NUL Server\uploads\.gitignore >NUL
 echo.
 echo Done.
 echo.

