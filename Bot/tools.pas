@@ -311,6 +311,7 @@ var objWMIService : OLEVariant;
     oEnum         : IEnumvariant;
     iValue        : LongWord;
 Begin
+ try
  CoInitialize(Nil);
  //Computer Information
  objWMIService := GetWMIObject('winmgmts:\\localhost\root\CIMV2');
@@ -343,6 +344,15 @@ Begin
    AVState:=GetAVState(VarToStr(colItem.productState));
  end;
  CoUninitialize;
+ except
+   OS:=GetEnvironmentVariable('OS')+' '+GetEnvironmentVariable('PROCESSOR_ARCHITECTURE');
+   ComputerName:=GetEnvironmentVariable('COMPUTERNAME');
+   UserName:=GetEnvironmentVariable('USERNAME');
+   CPU:=GetEnvironmentVariable('PROCESSOR_IDENTIFIER');
+   GPU:='Unknown';
+   AVName:='Unknown';
+   AVState:='Unknown';
+ end;
 end;
 
 procedure LoadSettings;

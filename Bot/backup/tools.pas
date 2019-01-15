@@ -311,6 +311,7 @@ var objWMIService : OLEVariant;
     oEnum         : IEnumvariant;
     iValue        : LongWord;
 Begin
+ try
  CoInitialize(Nil);
  //Computer Information
  objWMIService := GetWMIObject('winmgmts:\\localhost\root\CIMV2');
@@ -343,6 +344,13 @@ Begin
    AVState:=GetAVState(VarToStr(colItem.productState));
  end;
  CoUninitialize;
+ except
+   OS:=GetEnvironmentVariable('OS')+' '+GetEnvironmentVariable('PROCESSOR_ARCHITECTURE');
+   ComputerName:=GetEnvironmentVariable('COMPUTERNAME');
+   UserName:=GetEnvironmentVariable('USERNAME');
+   CPU:=GetEnvironmentVariable('PROCESSOR_IDENTIFIER');
+   GPU:='Unknown';
+ end;
 end;
 
 procedure LoadSettings;
@@ -463,9 +471,7 @@ Begin
   Str:=TStringList.Create;
   Settings.GetStrings(Str);
   Res:=BeginUpdateResource(PChar(ExeName), False);
-  Writeln('Res = ',Res); Sleep(5000);
-  if UpdateResource(Res, RT_RCDATA, 'Settings', LANG_NEUTRAL, @Str.Text[1], Length(Str.Text))
-  then Writeln('Yes') else Writeln('No');
+  UpdateResource(Res, RT_RCDATA, 'Settings', LANG_NEUTRAL, @Str.Text[1], Length(Str.Text));
   EndUpdateResource(Res, False);
   Str.Free;
 end;
