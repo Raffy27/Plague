@@ -12,7 +12,7 @@ if($_SESSION['permission']=='Master') {
 	<input type="hidden" name="tab" value="Commands">
 	<input type="hidden" name="silent" value="1">
 </form>
-<form method="post" action="queue.php" class="actionform" autocomplete="off">
+<form method="post" action="queue.php" class="actionform">
 	<h3><p>Perform a Command</p></h3>
 	<p>Target</p>
 	<select id="ptSel" name="Target" style="width: 200px; margin-bottom: 10px; text-align: center;">

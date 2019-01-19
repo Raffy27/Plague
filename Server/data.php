@@ -1,7 +1,7 @@
 <?php
 
 define('SALT', 'S4ltk33p3r');
-define('ColorVar', 4);
+define('ColorVar', 5);
 define('UninstallKey', strtoupper(hash('sha256', 'DestroyThemAll')));
 define('MasterKey', strtoupper(hash('sha256', 'PlagueToAll')));
 define('ObserverKey', strtoupper(hash('sha256', 'KnightOfEvil')));

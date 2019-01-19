@@ -128,8 +128,6 @@
     </CodeGeneration>
     <Linking>
       <Debugging>
-        <UseHeaptrc Value="True"/>
-        <TrashVariables Value="True"/>
         <UseExternalDbgSyms Value="True"/>
       </Debugging>
     </Linking>

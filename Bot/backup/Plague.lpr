@@ -75,7 +75,7 @@ Begin
           Writeln('Command ',Net.Commands.ReadString(CmdID, 'Type', '???'),
           ' --> Worker #'+IntToStr(I)+'.');
           {$ENDIF}
-          Workers[I]:=TCmdWorker.Create(CmdID, I);
+          //Workers[I]:=TCmdWorker.Create(CmdID, I);
         end;
       end;
     end;

