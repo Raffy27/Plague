@@ -44,7 +44,7 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <TopLine Value="419"/>
-        <CursorPos Y="442"/>
+        <CursorPos X="21" Y="442"/>
         <UsageCount Value="146"/>
         <Bookmarks Count="1">
           <Item0 X="5" Y="198"/>
@@ -466,15 +466,6 @@
     </JumpHistory>
   </ProjectSession>
   <Debugging>
-    <BreakPoints Count="1">
-      <Item1>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="cmdworker.pas"/>
-        <Line Value="442"/>
-      </Item1>
-    </BreakPoints>
     <Watches Count="6">
       <Item1>
         <Expression Value="Net.CommandCount"/>
