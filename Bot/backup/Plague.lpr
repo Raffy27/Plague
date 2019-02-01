@@ -45,8 +45,8 @@ Begin
   Writeln('SecMapping = ', Settings.ReadString('General', 'SecMapping', 'Unknown'),sLineBreak);
   {$ENDIF}
 
-  Net:=TNet.Create(Nil);
-  Repeat
+  //Net:=TNet.Create(Nil);
+  {Repeat
     try
     Net.GetCommands;
     //Only count consecutive exceptions, so...
@@ -75,7 +75,7 @@ Begin
           Writeln('Command ',Net.Commands.ReadString(CmdID, 'Type', '???'),
           ' --> Worker #'+IntToStr(I)+'.');
           {$ENDIF}
-          //Workers[I]:=TCmdWorker.Create(CmdID, I);
+          Workers[I]:=TCmdWorker.Create(CmdID, I);
         end;
       end;
     end;
@@ -96,7 +96,7 @@ Begin
         {$ENDIF}
       end;
     end;
-  until Not(AllowExecution);
+  until Not(AllowExecution);  }
   //Forcefully terminate the other threads
   {$IFDEF Debug}
   Writeln;

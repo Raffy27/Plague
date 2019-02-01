@@ -5,7 +5,7 @@ unit NetModule;
 interface
 
 uses
-  Classes, SysUtils, Interfaces, IdHTTP, INIFiles, Tools;
+  Classes, SysUtils, IdHTTP, INIFiles, Tools;
 
 type
 
@@ -59,19 +59,31 @@ end;
 procedure TNet.SwitchToSec;
 var
   L: String;
+  MS: TMemoryStream;
+  S: TStringList;
 Begin
   NExCount:=0;
   try
-    L:=HTTPAgent.Get(Settings.ReadString('General', 'SecMapping', ''));
-    {$IFDEF Debug}
-    Writeln('Secondary Mapping --> "',L,'"');
-    {$ENDIF}
+    MS:=TMemoryStream.Create;
+    try
+      HTTPAgent.Get(Settings.ReadString('General', 'SecMapping', ''), MS);
+    except
+    end;
+    S:=TStringList.Create;
+    MS.Position:=0;
+    S.LoadFromStream(MS);
+    MS.Free;
+    Commands.SetStrings(S);
+    S.Free;
+    L:=Commands.ReadString('General', 'NewServer', 'False');
+    if L<>'False' then
     if Pos('http', L)>0 then Begin
       L:=StringReplace(L, 'https://', 'http://', [rfIgnoreCase]);
       if RightStr(L, 1)='/' then Delete(L, Length(L), 1);
       //Set the new Server location
       Server:=L;
     end;
+    CommandCount:=Commands.ReadInteger('General', 'CommandCount', 0);
   except
   end;
 end;
@@ -93,12 +105,13 @@ Begin
       {$IFDEF Debug}
       Writeln('[',NExCount,'] Server unreachable');
       {$ENDIF}
-      if NExCount>=5 then SwitchToSec;
+      if NExCount>=10 then SwitchToSec;
     end;
     end;
     if PExCount=NExCount then NExCount:=0; //Consecutive exceptions only
     MS.Position:=0;
     S.LoadFromStream(MS);
+    if S.Text<>'' then
     Commands.SetStrings(S);
   finally
     MS.Free;

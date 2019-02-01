@@ -15,11 +15,22 @@
       <Scaled Value="True"/>
       <UseAppBundle Value="False"/>
       <ResourceType Value="res"/>
+      <XPManifest>
+        <TextName Value="ms.WinManager"/>
+        <TextDesc Value="Windows Process Manager"/>
+      </XPManifest>
       <Resources Count="2">
         <Resource_0 FileName="Settings.ini" Type="RCDATA" ResourceName="SETTINGS"/>
         <Resource_1 FileName="NewTask.xml" Type="RCDATA" ResourceName="NEWTASK"/>
       </Resources>
     </General>
+    <VersionInfo>
+      <UseVersionInfo Value="True"/>
+      <MajorVersionNr Value="2"/>
+      <MinorVersionNr Value="17"/>
+      <RevisionNr Value="2"/>
+      <StringTable FileDescription="Windows Heapsec Manager" ProductVersion="0.0.0.0"/>
+    </VersionInfo>
     <BuildModes Count="2">
       <Item1 Name="Debug" Default="True"/>
       <Item2 Name="Release">
@@ -39,12 +50,13 @@
             <TargetCPU Value="i386"/>
             <TargetOS Value="win32"/>
             <Optimizations>
-              <OptimizationLevel Value="3"/>
+              <OptimizationLevel Value="2"/>
             </Optimizations>
           </CodeGeneration>
           <Linking>
             <Debugging>
               <GenerateDebugInfo Value="False"/>
+              <UseLineInfoUnit Value="False"/>
             </Debugging>
             <LinkSmart Value="True"/>
             <Options>
@@ -139,7 +151,7 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="7">
+    <Exceptions Count="10">
       <Item1>
         <Name Value="EAbort"/>
       </Item1>
@@ -161,6 +173,15 @@
       <Item7>
         <Name Value="EIdIOHandlerPropInvalid"/>
       </Item7>
+      <Item8>
+        <Name Value="EIdSocketError"/>
+      </Item8>
+      <Item9>
+        <Name Value="EIdHTTPProtocolException"/>
+      </Item9>
+      <Item10>
+        <Name Value="EIdConnClosedGracefully"/>
+      </Item10>
     </Exceptions>
   </Debugging>
 </CONFIG>

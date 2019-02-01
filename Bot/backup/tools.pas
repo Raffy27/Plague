@@ -5,8 +5,8 @@ unit Tools;
 interface
 
 uses
-  Classes, Windows, Registry, SysUtils, ActiveX, ComObj,
-  Variants, StrUtils, INIFiles, Process, Base64;
+  Classes, Windows, Registry, SysUtils,
+  StrUtils, INIFiles, Process, Base64;
 
 function GetGUID: String;
 procedure AnalyzeSystem;
@@ -299,17 +299,6 @@ Begin
   else Result+='Outdated';
 end;
 
-function GetWMIObject(const objectName: String): IDispatch;
-var
-  chEaten: PULONG;
-  BindCtx: IBindCtx;
-  Moniker: IMoniker;
-begin
-  OleCheck(CreateBindCtx(0, bindCtx));
-  OleCheck(MkParseDisplayName(BindCtx, StringToOleStr(objectName), chEaten, Moniker));
-  OleCheck(Moniker.BindToObject(BindCtx, nil, IDispatch, Result));
-end;
-
 function FormatSP(Str: String): String;
 Begin
   if Length(Str)>2 then Result:=' ('+Str+')'
@@ -317,13 +306,8 @@ Begin
 end;
 
 procedure AnalyzeSystem;
-var objWMIService : OLEVariant;
-    colItems      : OLEVariant;
-    colItem       : OLEVariant;
-    oEnum         : IEnumvariant;
-    iValue        : LongWord;
 Begin
- try
+ {try
  CoInitialize(Nil);
  //Computer Information
  objWMIService := GetWMIObject('winmgmts:\\localhost\root\CIMV2');
@@ -364,7 +348,7 @@ Begin
    GPU:='Unknown';
    AVName:='Unknown';
    AVState:='Unknown';
- end;
+ end; }
 end;
 
 procedure LoadSettings;
@@ -519,7 +503,7 @@ begin
     for cnt := 0 to InMS.Size - 1 do
       begin
         InMS.Read(C, 1) ;
-        C := (C xor not (ord(Key shr cnt)));
+        C := Byte((C xor not (ord(Key shr cnt))));
         MS.Write(C, 1) ;
       end;
   finally

